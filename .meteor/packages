@@ -6,3 +6,11 @@
 autopublish
 insecure
 preserve-inputs
+accounts-github
+accounts-ui
+backbone
+bootstrap
+coffeescript
+jquery
+less
+underscore
