@@ -3,4 +3,4 @@ _.extend Template.queues,
     "queue-bort"
 
   queueLists: ->
-    QueueLists.find {}, sort: {name: 1}
+    QueueList.all
