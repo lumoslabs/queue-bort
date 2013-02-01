@@ -11,9 +11,20 @@
   <div id="queues">
     <div class="title">{{title}}</div>
     {{#each queueLists}}
-      <div class="queueList">
-        {{name}}
-      </div>
+      {{> queueList}}
     {{/each}}
   </div>
+</template>
+
+<template name="queueList">
+  <div class="queueList">
+    {{name}}
+    {{#each queueBoxes}}
+      {{> queueBox}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="queueBox">
+  <div class="queueBox">{{title}}</div>
 </template>
