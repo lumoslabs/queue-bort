@@ -4,6 +4,9 @@ class QueueList
   addQueue: (name) ->
     @_mongoUpdate $push: queues: name
 
+  removeQueue: (name) ->
+    @_mongoUpdate $pull: queues: name
+
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
 
