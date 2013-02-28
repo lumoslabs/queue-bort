@@ -7,7 +7,7 @@ _.extend Template.queueList,
 
 Template.queueList.events
   'click .newQueue': (e) ->
-    QueueList.find(@).addQueue '[new queue]'
+    QueueList.find(@).addQueue()
 
 Template.queueBox.events
   'click .delete': (e) ->
