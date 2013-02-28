@@ -16,7 +16,7 @@ class QueueList
   @collection: new Meteor.Collection "queue_lists"
 
   @all: ->
-    QueueList.collection.find()
+    QueueList.collection.find({}, {sort: {name: 1}})
 
   @create: (attrs) ->
     QueueList.collection.insert attrs
