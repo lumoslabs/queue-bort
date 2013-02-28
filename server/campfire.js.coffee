@@ -10,10 +10,10 @@ Campfire =
       data: attrs
 
   speak: (msg) ->
-    @http 'post', '/speak', {"message": {"body": msg}}
+    @http 'post', '/speak', message: body: msg
 
   updateTopic: (topic) ->
-    @http 'put', '', {"room": {"topic": topic}}
+    @http 'put', '', room: topic: topic
 
 Campfire.config.url = "https://#{Campfire.config.domain}.campfirenow.com/room/#{Campfire.config.room}"
 
