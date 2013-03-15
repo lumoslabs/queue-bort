@@ -10,21 +10,21 @@
 <template name="queues">
   <div id="queues">
     <div class="title">{{title}}</div>
-    {{#each queueLists}}
-      {{> queueList}}
+    {{#each tags}}
+      {{> queueGroup}}
     {{/each}}
   </div>
 </template>
 
-<template name="queueList">
-  <div class="queueList">
-    <h3>{{name}}</h3>
-    {{#each queueBoxes}}
-      {{> queueBox}}
+<template name="queueGroup">
+  <div class="queueGroup">
+    <h3>{{groupName}}</h3>
+    {{#each queues}}
+      {{> queue}}
     {{/each}}
   </div>
 </template>
 
-<template name="queueBox">
-  <div class="queueBox">{{title}}</div>
+<template name="queue">
+  <div class="queue">{{queueName}}</div>
 </template>
