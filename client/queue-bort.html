@@ -22,9 +22,15 @@
     {{#each queues}}
       {{> queue}}
     {{/each}}
+    <div class="newQueue">+</div>
   </div>
 </template>
 
 <template name="queue">
-  <div class="queue">{{queueName}}</div>
+  <div class="queue">
+    <h4>{{queueName}}</h4>
+    <div class="controls">
+      <div class="delete">x</div>
+    </div>
+  </div>
 </template>
