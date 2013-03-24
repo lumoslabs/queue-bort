@@ -7,15 +7,14 @@ _.extend Template.queues,
     tags
 
 _.extend Template.queueGroup,
-  groupName: -> @
-  queues:    -> Queue.collection.find tag: @
-  #queueBoxes: -> _.map @queues, (q) -> ql_id: @_id, title: q
+  groupName: -> @.toString()
+  queues:    -> Queue.collection.find tag: @.toString()
 
 Template.queueGroup.events
   'click .newQueue': (e) ->
-    QueueList.find(@).addQueue()
+    Queue.create tag: @.toString()
 
 Template.queue.events
   'click .delete': (e) ->
-    #QueueList.find(_id: @ql_id).removeQueue(@title) if confirm "Delete #{@title}?"
-    console.log "delete"
+    queue = Queue.findOne(_id: @_id)
+    queue.destroy() if confirm "Delete #{queue.name()}?"
