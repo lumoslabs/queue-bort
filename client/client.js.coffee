@@ -4,7 +4,7 @@ _.extend Template.queues,
     tags = []
     Queue.all().forEach (ql) ->
       tags.push(ql.tag) if ql.tag? and tags.indexOf(ql.tag) < 0
-    tags
+    tags.sort()
 
 _.extend Template.queueGroup,
   groupName: -> @.toString()
