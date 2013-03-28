@@ -14,7 +14,23 @@ Template.queueGroup.events
   'click .newQueue': (e) ->
     Queue.create tag: @.toString()
 
+
+_.extend Template.queue,
+  editing: -> Session.equals 'editingQueueName', @_id
+
 Template.queue.events
   'click .delete': (e) ->
     queue = Queue.findOne(_id: @_id)
     queue.destroy() if confirm "Delete #{queue.name()}?"
+
+  'dblclick h4': (e, tmpl) ->
+    Session.set 'editingQueueName', @_id
+    Meteor.flush() # force DOM redraw, so we can focus the edit field
+    Helpers.activateInput tmpl.find '.text-input'
+
+Template.queue.events Helpers.okCancelEvents '.text-input',
+  ok: (value) ->
+    Queue.findOne(_id: @_id).update(queueName: value) unless value.length <= 0
+    Session.set 'editingQueueName', null
+  cancel: ->
+    Session.set 'editingQueueName', null

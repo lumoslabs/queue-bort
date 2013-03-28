@@ -28,7 +28,19 @@
 
 <template name="queue">
   <div class="queue">
-    <h4>{{queueName}}</h4>
+
+    <div class="queueName">
+      {{#if editing}}
+        <div class="edit">
+          <input class="text-input" id="queue-name-input" type="text" value="{{queueName}}" />
+        </div>
+      {{else}}
+        <div class="display">
+          <h4>{{queueName}}</h4>
+        </div>
+      {{/if}}
+    </div>
+
     <div class="controls">
       <div class="delete">x</div>
     </div>
