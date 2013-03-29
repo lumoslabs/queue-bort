@@ -53,7 +53,7 @@ Template.queueAttr.events Helpers.okCancelEvents '.text-input',
   ok: (value) ->
     _.tap {}, (updateVals) =>
       updateVals[@dbName] = value
-      Queue.findOne(_id: @qid).update(updateVals) unless value.length <= 0
+      Queue.findOne(_id: @qid).update(updateVals)
     Session.set 'editingQueueAttr', null
   cancel: ->
     Session.set 'editingQueueAttr', null
