@@ -26,9 +26,10 @@ Template.queue.events
     queue.destroy() if confirm "Delete #{queue.name()}?"
 
   'dblclick .name': (e, tmpl) ->
-    Session.set 'editingQueueName', @_id
-    Meteor.flush() # force DOM redraw, so we can focus the edit field
-    Helpers.activateInput tmpl.find '.text-input'
+    if Meteor.userId()
+      Session.set 'editingQueueName', @_id
+      Meteor.flush() # force DOM redraw, so we can focus the edit field
+      Helpers.activateInput tmpl.find '.text-input'
 
 Template.queue.events Helpers.okCancelEvents '.queueName .text-input',
   ok: (value) ->
@@ -45,7 +46,7 @@ _.extend Template.queueAttr,
 
 Template.queueAttr.events
   'dblclick': (e, tmpl) ->
-    unless @fixed
+    if Meteor.userId() and !@fixed
       Session.set 'editingQueueAttr', "#{@qid}_#{@name}"
       Meteor.flush() # force DOM redraw, so we can focus the edit field
       Helpers.activateInput tmpl.find '.text-input'
