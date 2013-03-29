@@ -45,9 +45,10 @@ _.extend Template.queueAttr,
 
 Template.queueAttr.events
   'dblclick': (e, tmpl) ->
-    Session.set 'editingQueueAttr', "#{@qid}_#{@name}"
-    Meteor.flush() # force DOM redraw, so we can focus the edit field
-    Helpers.activateInput tmpl.find '.text-input'
+    unless @fixed
+      Session.set 'editingQueueAttr', "#{@qid}_#{@name}"
+      Meteor.flush() # force DOM redraw, so we can focus the edit field
+      Helpers.activateInput tmpl.find '.text-input'
 
 Template.queueAttr.events Helpers.okCancelEvents '.text-input',
   ok: (value) ->

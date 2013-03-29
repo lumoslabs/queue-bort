@@ -7,8 +7,9 @@ class Queue
   displayedAttrs: ->
     _.map Queue.attrsForDisplay, (attr) =>
       name:   attr.displayName
-      dbName: attr.dbName
       val:    @attrs[attr.dbName]
+      dbName: attr.dbName
+      fixed:  attr.fixed
 
   name: ->
     @attrs.queueName
@@ -22,9 +23,9 @@ class Queue
   @collection: new Meteor.Collection "queues"
 
   @attrsForDisplay: [
-    {displayName: 'SHA',       dbName: 'sha'},
-    {displayName: 'Tag',       dbName: 'release_tag'},
-    {displayName: 'In use by', dbName: 'cur_user'}
+    {displayName: 'SHA',       dbName: 'sha'                    },
+    {displayName: 'Tag',       dbName: 'release_tag'            },
+    {displayName: 'In use by', dbName: 'cur_user',   fixed: true}
   ]
 
   @all: ->
