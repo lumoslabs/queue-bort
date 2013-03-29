@@ -16,11 +16,7 @@ Template.queueGroup.events
 
 
 _.extend Template.queue,
-  attrs: ->
-    [
-      {name: 'SHA', val: '0FA3B235'}
-      {name: 'bla', val: 'lalala'}
-    ]
+  attrs:   -> Queue.findOne(_id: @_id).displayedAttrs()
   editing: -> Session.equals 'editingQueueName', @_id
 
 Template.queue.events

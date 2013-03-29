@@ -4,6 +4,9 @@ class Queue
   destroy: ->
     Queue.collection.remove @attrs._id
 
+  displayedAttrs: ->
+    _.map Queue.attrsForDisplay, (attr) => {name: attr.displayName, val: @attrs[attr.dbName]}
+
   name: ->
     @attrs.queueName
 
@@ -14,6 +17,12 @@ class Queue
     Queue.collection.update @attrs._id, params
 
   @collection: new Meteor.Collection "queues"
+
+  @attrsForDisplay: [
+    {displayName: 'SHA',       dbName: 'sha'},
+    {displayName: 'Tag',       dbName: 'release_tag'},
+    {displayName: 'In use by', dbName: 'cur_user'}
+  ]
 
   @all: ->
     Queue.collection.find()
