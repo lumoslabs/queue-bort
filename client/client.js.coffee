@@ -16,9 +16,11 @@ Template.queueGroup.events
 
 
 _.extend Template.queue,
-  attrs:   ->
+  attrs: ->
     _.map Queue.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, qid: @_id
-  editing: -> Session.equals 'editingQueueName', @_id
+  claimText:   -> "CLAIM ME" #TODO switch to "get in line" if there's a queue
+  currentUser: -> Meteor.user()
+  editing:     -> Session.equals 'editingQueueName', @_id
 
 Template.queue.events
   'click .delete': (e) ->

@@ -53,6 +53,9 @@
 
     <div class="controls">
       <div class="delete">x</div>
+      {{#if currentUser}}
+        <div class="claim">{{claimText}}</div>
+      {{/if}}
     </div>
   </div>
 </template>
