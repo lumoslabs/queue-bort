@@ -41,8 +41,23 @@
       {{/if}}
     </div>
 
+    <div class="attrs">
+      <ol>
+        {{#each attrs}}
+          <li>
+            {{> queueAttr}}
+          </li>
+        {{/each}}
+      </ol>
+    </div>
+
     <div class="controls">
       <div class="delete">x</div>
     </div>
   </div>
+</template>
+
+<template name="queueAttr">
+  <span class="attrName">{{attrName}}: </span>
+  <span class="attrVal">{{attrVal}}</span>
 </template>

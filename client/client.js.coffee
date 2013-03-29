@@ -16,6 +16,11 @@ Template.queueGroup.events
 
 
 _.extend Template.queue,
+  attrs: ->
+    [
+      {name: 'SHA', val: '0FA3B235'}
+      {name: 'bla', val: 'lalala'}
+    ]
   editing: -> Session.equals 'editingQueueName', @_id
 
 Template.queue.events
@@ -34,3 +39,8 @@ Template.queue.events Helpers.okCancelEvents '.text-input',
     Session.set 'editingQueueName', null
   cancel: ->
     Session.set 'editingQueueName', null
+
+
+_.extend Template.queueAttr,
+  attrName: -> @.name
+  attrVal:  -> @.val
