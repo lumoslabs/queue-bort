@@ -1,4 +1,4 @@
-_.extend Template.queues,
+Template.queues.helpers
   title: -> "queue-bort"
   tags:  ->
     tags = []
@@ -6,7 +6,8 @@ _.extend Template.queues,
       tags.push(ql.tag) if ql.tag? and tags.indexOf(ql.tag) < 0
     tags.sort()
 
-_.extend Template.queueGroup,
+
+Template.queueGroup.helpers
   groupName: -> @.toString()
   queues:    -> Queue.collection.find tag: @.toString()
 
@@ -15,7 +16,7 @@ Template.queueGroup.events
     Queue.create tag: @.toString()
 
 
-_.extend Template.queue,
+Template.queue.helpers
   attrs: ->
     _.map Queue.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, qid: @_id
   claimText:   -> "CLAIM ME" #TODO switch to "get in line" if there's a queue
@@ -41,7 +42,7 @@ Template.queue.events Helpers.okCancelEvents '.queueName .text-input',
     Session.set 'editingQueueName', null
 
 
-_.extend Template.queueAttr,
+Template.queueAttr.helpers
   attrName:    -> @name
   attrVal:     -> @val
   editingAttr: -> Session.equals 'editingQueueAttr', "#{@qid}_#{@name}"
