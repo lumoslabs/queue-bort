@@ -59,5 +59,9 @@
 
 <template name="queueAttr">
   <span class="attrName">{{attrName}}: </span>
-  <span class="attrVal">{{attrVal}}</span>
+  {{#if editingAttr}}
+    <input class="text-input" id="queue-name-input" type="text" value="{{attrVal}}" />
+  {{else}}
+    <span class="attrVal">{{attrVal}}</span>
+  {{/if}}
 </template>

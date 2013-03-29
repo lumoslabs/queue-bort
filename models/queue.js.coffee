@@ -5,7 +5,10 @@ class Queue
     Queue.collection.remove @attrs._id
 
   displayedAttrs: ->
-    _.map Queue.attrsForDisplay, (attr) => {name: attr.displayName, val: @attrs[attr.dbName]}
+    _.map Queue.attrsForDisplay, (attr) =>
+      name:   attr.displayName
+      dbName: attr.dbName
+      val:    @attrs[attr.dbName]
 
   name: ->
     @attrs.queueName

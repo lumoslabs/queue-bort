@@ -16,7 +16,8 @@ Template.queueGroup.events
 
 
 _.extend Template.queue,
-  attrs:   -> Queue.findOne(_id: @_id).displayedAttrs()
+  attrs:   ->
+    _.map Queue.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, qid: @_id
   editing: -> Session.equals 'editingQueueName', @_id
 
 Template.queue.events
@@ -29,7 +30,7 @@ Template.queue.events
     Meteor.flush() # force DOM redraw, so we can focus the edit field
     Helpers.activateInput tmpl.find '.text-input'
 
-Template.queue.events Helpers.okCancelEvents '.text-input',
+Template.queue.events Helpers.okCancelEvents '.queueName .text-input',
   ok: (value) ->
     Queue.findOne(_id: @_id).update(queueName: value) unless value.length <= 0
     Session.set 'editingQueueName', null
@@ -38,5 +39,21 @@ Template.queue.events Helpers.okCancelEvents '.text-input',
 
 
 _.extend Template.queueAttr,
-  attrName: -> @.name
-  attrVal:  -> @.val
+  attrName:    -> @name
+  attrVal:     -> @val
+  editingAttr: -> Session.equals 'editingQueueAttr', "#{@qid}_#{@name}"
+
+Template.queueAttr.events
+  'dblclick': (e, tmpl) ->
+    Session.set 'editingQueueAttr', "#{@qid}_#{@name}"
+    Meteor.flush() # force DOM redraw, so we can focus the edit field
+    Helpers.activateInput tmpl.find '.text-input'
+
+Template.queueAttr.events Helpers.okCancelEvents '.text-input',
+  ok: (value) ->
+    _.tap {}, (updateVals) =>
+      updateVals[@dbName] = value
+      Queue.findOne(_id: @qid).update(updateVals) unless value.length <= 0
+    Session.set 'editingQueueAttr', null
+  cancel: ->
+    Session.set 'editingQueueAttr', null
