@@ -24,6 +24,10 @@ Template.queue.helpers
   editing:     -> Session.equals 'editingQueueName', @_id
 
 Template.queue.events
+  'click .claim': (e) ->
+    if Meteor.userId()
+      Queue.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
+
   'click .delete': (e) ->
     queue = Queue.findOne(_id: @_id)
     queue.destroy() if confirm "Delete #{queue.name()}?"
