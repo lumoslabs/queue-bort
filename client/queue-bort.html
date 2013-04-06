@@ -11,32 +11,32 @@
   <div id="queues">
     <div class="title">{{title}}</div>
     {{#each tags}}
-      {{> queueGroup}}
+      {{> serverGroup}}
     {{/each}}
   </div>
 </template>
 
-<template name="queueGroup">
-  <div class="queueGroup">
+<template name="serverGroup">
+  <div class="serverGroup">
     <h3>{{groupName}}</h3>
-    {{#each queues}}
-      {{> queue}}
+    {{#each servers}}
+      {{> server}}
     {{/each}}
-    <div class="newQueue">+</div>
+    <div class="newServer">+</div>
   </div>
 </template>
 
-<template name="queue">
-  <div class="queue">
+<template name="server">
+  <div class="server">
 
-    <div class="queueName">
+    <div class="serverName">
       {{#if editing}}
         <div class="edit">
-          <input class="text-input" id="queue-name-input" type="text" value="{{queueName}}" />
+          <input class="text-input" id="server-name-input" type="text" value="{{serverName}}" />
         </div>
       {{else}}
         <div class="display">
-          <h4 class="name">{{queueName}}</h4>
+          <h4 class="name">{{serverName}}</h4>
         </div>
       {{/if}}
     </div>
@@ -45,7 +45,7 @@
       <ol>
         {{#each attrs}}
           <li>
-            {{> queueAttr}}
+            {{> serverAttr}}
           </li>
         {{/each}}
       </ol>
@@ -60,10 +60,10 @@
   </div>
 </template>
 
-<template name="queueAttr">
+<template name="serverAttr">
   <span class="attrName">{{attrName}}: </span>
   {{#if editingAttr}}
-    <input class="text-input" id="queue-name-input" type="text" value="{{attrVal}}" />
+    <input class="text-input" id="server-name-input" type="text" value="{{attrVal}}" />
   {{else}}
     <span class="attrVal">{{attrVal}}</span>
   {{/if}}

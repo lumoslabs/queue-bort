@@ -2,67 +2,67 @@ Template.queues.helpers
   title: -> "queue-bort"
   tags:  ->
     tags = []
-    Queue.all().forEach (ql) ->
+    Server.all().forEach (ql) ->
       tags.push(ql.tag) if ql.tag? and tags.indexOf(ql.tag) < 0
     tags.sort()
 
 
-Template.queueGroup.helpers
+Template.serverGroup.helpers
   groupName: -> @.toString()
-  queues:    -> Queue.collection.find tag: @.toString()
+  servers:   -> Server.collection.find tag: @.toString()
 
-Template.queueGroup.events
-  'click .newQueue': (e) ->
-    Queue.create tag: @.toString()
+Template.serverGroup.events
+  'click .newServer': (e) ->
+    Server.create tag: @.toString()
 
 
-Template.queue.helpers
+Template.server.helpers
   attrs: ->
-    _.map Queue.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, qid: @_id
+    _.map Server.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, sid: @_id
   claimText:   -> "CLAIM ME" #TODO switch to "get in line" if there's a queue
   currentUser: -> Meteor.user()
-  editing:     -> Session.equals 'editingQueueName', @_id
+  editing:     -> Session.equals 'editingServerName', @_id
 
-Template.queue.events
+Template.server.events
   'click .claim': (e) ->
     if Meteor.userId()
-      Queue.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
+      Server.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
 
   'click .delete': (e) ->
-    queue = Queue.findOne(_id: @_id)
-    queue.destroy() if confirm "Delete #{queue.name()}?"
+    server = Server.findOne(_id: @_id)
+    server.destroy() if confirm "Delete #{server.name()}?"
 
   'dblclick .name': (e, tmpl) ->
     if Meteor.userId()
-      Session.set 'editingQueueName', @_id
+      Session.set 'editingServerName', @_id
       Meteor.flush() # force DOM redraw, so we can focus the edit field
       Helpers.activateInput tmpl.find '.text-input'
 
-Template.queue.events Helpers.okCancelEvents '.queueName .text-input',
+Template.server.events Helpers.okCancelEvents '.serverName .text-input',
   ok: (value) ->
-    Queue.findOne(_id: @_id).update(queueName: value) unless value.length <= 0
-    Session.set 'editingQueueName', null
+    Server.findOne(_id: @_id).update(serverName: value) unless value.length <= 0
+    Session.set 'editingServerName', null
   cancel: ->
-    Session.set 'editingQueueName', null
+    Session.set 'editingServerName', null
 
 
-Template.queueAttr.helpers
+Template.serverAttr.helpers
   attrName:    -> @name
   attrVal:     -> @val
-  editingAttr: -> Session.equals 'editingQueueAttr', "#{@qid}_#{@name}"
+  editingAttr: -> Session.equals 'editingServerAttr', "#{@sid}_#{@name}"
 
-Template.queueAttr.events
+Template.serverAttr.events
   'dblclick': (e, tmpl) ->
     if Meteor.userId() and !@fixed
-      Session.set 'editingQueueAttr', "#{@qid}_#{@name}"
+      Session.set 'editingServerAttr', "#{@sid}_#{@name}"
       Meteor.flush() # force DOM redraw, so we can focus the edit field
       Helpers.activateInput tmpl.find '.text-input'
 
-Template.queueAttr.events Helpers.okCancelEvents '.text-input',
+Template.serverAttr.events Helpers.okCancelEvents '.text-input',
   ok: (value) ->
     _.tap {}, (updateVals) =>
       updateVals[@dbName] = value
-      Queue.findOne(_id: @qid).update(updateVals)
-    Session.set 'editingQueueAttr', null
+      Server.findOne(_id: @sid).update(updateVals)
+    Session.set 'editingServerAttr', null
   cancel: ->
-    Session.set 'editingQueueAttr', null
+    Session.set 'editingServerAttr', null
