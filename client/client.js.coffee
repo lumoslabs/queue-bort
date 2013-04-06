@@ -16,19 +16,35 @@ Template.serverGroup.events
     Server.create tag: @toString()
 
 
-Template.server.helpers
+_.extend Template.server,
   attrs: ->
     _.map Server.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, sid: @_id
-  claimText:   -> "CLAIM ME" #TODO switch to "get in line" if there's a queue
+  claimClass: ->
+    curOwner = Server.findOne(_id: @_id).attrs.cur_user
+    if curOwner == Meteor.user().profile.name
+      "unclaim"
+    else if curOwner? and curOwner.length > 0
+      "queueUp"
+    else
+      "claim"
+  claimText: ->
+    texts =
+      claim:   "CLAIM ME"
+      unclaim: "UNCLAIM"
+      queueUp: "Get in line"
+    texts[Template.server.claimClass.apply(@)]
   currentUser: -> Meteor.user()
   editing:     -> Session.equals 'editingServerName', @_id
 
 Template.server.events
-  'click .claim': (e) ->
-    if Meteor.userId()
-      Server.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
+  'click .claim': ->
+    Server.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
+  'click .unclaim': ->
+    Server.findOne(_id: @_id).update cur_user: ''
+  'click .queueUp': ->
+    Server.findOne(_id: @_id).update cur_user: ''
 
-  'click .delete': (e) ->
+  'click .delete': ->
     server = Server.findOne(_id: @_id)
     server.destroy() if confirm "Delete #{server.name()}?"
 
