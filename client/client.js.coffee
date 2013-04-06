@@ -42,7 +42,7 @@ Template.server.events
   'click .unclaim': ->
     Server.findOne(_id: @_id).update cur_user: ''
   'click .queueUp': ->
-    Server.findOne(_id: @_id).update cur_user: ''
+    console.log "implement queue"
 
   'click .delete': ->
     server = Server.findOne(_id: @_id)
