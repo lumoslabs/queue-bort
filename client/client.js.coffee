@@ -8,12 +8,12 @@ Template.queues.helpers
 
 
 Template.serverGroup.helpers
-  groupName: -> @.toString()
-  servers:   -> Server.collection.find tag: @.toString()
+  groupName: -> @toString()
+  servers:   -> Server.collection.find {tag: @toString()}, {sort: ['serverName']}
 
 Template.serverGroup.events
   'click .newServer': (e) ->
-    Server.create tag: @.toString()
+    Server.create tag: @toString()
 
 
 Template.server.helpers
