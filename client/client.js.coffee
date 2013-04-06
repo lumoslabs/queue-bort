@@ -1,4 +1,4 @@
-Template.queues.helpers
+_.extend Template.queues,
   title: -> "queue-bort"
   tags:  ->
     tags = []
@@ -7,7 +7,7 @@ Template.queues.helpers
     tags.sort()
 
 
-Template.serverGroup.helpers
+_.extend Template.serverGroup,
   groupName: -> @toString()
   servers:   -> Server.collection.find {tag: @toString()}, {sort: ['serverName']}
 
@@ -62,7 +62,7 @@ Template.server.events Helpers.okCancelEvents '.serverName .text-input',
     Session.set 'editingServerName', null
 
 
-Template.serverAttr.helpers
+_.extend Template.serverAttr,
   attrName:    -> @name
   attrVal:     -> @val
   editingAttr: -> Session.equals 'editingServerAttr', "#{@sid}_#{@name}"
