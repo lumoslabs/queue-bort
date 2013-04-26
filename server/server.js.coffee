@@ -8,7 +8,3 @@ Meteor.startup ->
     console.log "No servers found, generating from seed data"
     DeployTarget.create deployTargetName: 'lumos_rails', env: 'Production'
     DeployTarget.create deployTargetName: 'lumos_rails', env: 'Staging'
-
-Meteor.Router.add '/deploy_target/:target/:env.json', 'GET', (target, env) ->
-  dt = DeployTarget.findOne deployTargetName: target, env: env
-  JSON.stringify dt
