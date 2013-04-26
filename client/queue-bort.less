@@ -58,11 +58,15 @@ ol {
         font-family: monospace;
         color:       magenta;
 
-        li {
-          min-height: 30px;
-          vertical-align: top;
-          span {
+        ol {
+          margin-left: 5px;
+
+          li {
+            min-height: 30px;
             vertical-align: top;
+            span {
+              vertical-align: top;
+            }
           }
         }
 
@@ -70,7 +74,15 @@ ol {
           margin-bottom: 0px;
         }
 
+        .attrName {
+          display: inline-block;
+          width:   9em;
+        }
+
         .attrVal {
+          display:     inline-block;
+          width:       18em;
+          overflow:    hidden;
           font-weight: bold;
         }
       }
