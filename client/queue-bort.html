@@ -11,32 +11,32 @@
   <div id="queues">
     <div class="title">{{title}}</div>
     {{#each tags}}
-      {{> serverGroup}}
+      {{> deployTargetGroup}}
     {{/each}}
   </div>
 </template>
 
-<template name="serverGroup">
-  <div class="serverGroup">
+<template name="deployTargetGroup">
+  <div class="deployTargetGroup">
     <h3>{{groupName}}</h3>
-    {{#each servers}}
-      {{> server}}
+    {{#each deployTargets}}
+      {{> deployTarget}}
     {{/each}}
-    <div class="newServer">+</div>
+    <div class="newDeployTarget">+</div>
   </div>
 </template>
 
-<template name="server">
-  <div class="server">
+<template name="deployTarget">
+  <div class="deployTarget">
 
-    <div class="serverName">
+    <div class="deployTargetName">
       {{#if editing}}
         <div class="edit">
-          <input class="text-input" id="server-name-input" type="text" value="{{serverName}}" />
+          <input class="text-input" id="deployTarget-name-input" type="text" value="{{deployTargetName}}" />
         </div>
       {{else}}
         <div class="display">
-          <h4 class="name">{{serverName}}</h4>
+          <h4 class="name">{{deployTargetName}}</h4>
         </div>
       {{/if}}
     </div>
@@ -45,7 +45,7 @@
       <ol>
         {{#each attrs}}
           <li>
-            {{> serverAttr}}
+            {{> deployTargetAttr}}
           </li>
         {{/each}}
       </ol>
@@ -60,10 +60,10 @@
   </div>
 </template>
 
-<template name="serverAttr">
+<template name="deployTargetAttr">
   <span class="attrName">{{attrName}}: </span>
   {{#if editingAttr}}
-    <input class="text-input" id="server-name-input" type="text" value="{{attrVal}}" />
+    <input class="text-input" id="deployTarget-name-input" type="text" value="{{attrVal}}" />
   {{else}}
     <span class="attrVal">{{attrVal}}</span>
   {{/if}}

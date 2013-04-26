@@ -4,7 +4,7 @@ Accounts.onCreateUser (options, user) ->
   user
 
 Meteor.startup ->
-  if Server.all().count() == 0
+  if DeployTarget.all().count() == 0
     console.log "No servers found, generating from seed data"
-    Server.create serverName: 'lumos_rails', tag: 'Production'
-    Server.create serverName: 'lumos_rails', tag: 'Staging'
+    DeployTarget.create deployTargetName: 'lumos_rails', tag: 'Production'
+    DeployTarget.create deployTargetName: 'lumos_rails', tag: 'Staging'

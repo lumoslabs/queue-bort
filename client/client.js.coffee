@@ -2,25 +2,25 @@ _.extend Template.queues,
   title: -> "queue-bort"
   tags:  ->
     tags = []
-    Server.all().forEach (ql) ->
+    DeployTarget.all().forEach (ql) ->
       tags.push(ql.tag) if ql.tag? and tags.indexOf(ql.tag) < 0
     tags.sort()
 
 
-_.extend Template.serverGroup,
-  groupName: -> @toString()
-  servers:   -> Server.collection.find {tag: @toString()}, {sort: ['serverName']}
+_.extend Template.deployTargetGroup,
+  groupName:     -> @toString()
+  deployTargets: -> DeployTarget.collection.find {tag: @toString()}, {sort: ['deployTargetName']}
 
-Template.serverGroup.events
-  'click .newServer': (e) ->
-    Server.create tag: @toString()
+Template.deployTargetGroup.events
+  'click .newDeployTarget': (e) ->
+    DeployTarget.create tag: @toString()
 
 
-_.extend Template.server,
+_.extend Template.deployTarget,
   attrs: ->
-    _.map Server.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, sid: @_id
+    _.map DeployTarget.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, sid: @_id
   claimClass: ->
-    curOwner = Server.findOne(_id: @_id).attrs.cur_user
+    curOwner = DeployTarget.findOne(_id: @_id).attrs.cur_user
     if curOwner == Meteor.user().profile.name
       "unclaim"
     else if curOwner? and curOwner.length > 0
@@ -32,53 +32,53 @@ _.extend Template.server,
       claim:   "CLAIM ME"
       unclaim: "UNCLAIM"
       queueUp: "Get in line"
-    texts[Template.server.claimClass.apply(@)]
+    texts[Template.deployTarget.claimClass.apply(@)]
   currentUser: -> Meteor.user()
-  editing:     -> Session.equals 'editingServerName', @_id
+  editing:     -> Session.equals 'editingDeployTargetName', @_id
 
-Template.server.events
+Template.deployTarget.events
   'click .claim': ->
-    Server.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
+    DeployTarget.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
   'click .unclaim': ->
-    Server.findOne(_id: @_id).update cur_user: ''
+    DeployTarget.findOne(_id: @_id).update cur_user: ''
   'click .queueUp': ->
     console.log "implement queue"
 
   'click .delete': ->
-    server = Server.findOne(_id: @_id)
-    server.destroy() if confirm "Delete #{server.name()}?"
+    deployTarget = DeployTarget.findOne(_id: @_id)
+    deployTarget.destroy() if confirm "Delete #{deployTarget.name()}?"
 
   'dblclick .name': (e, tmpl) ->
     if Meteor.userId()
-      Session.set 'editingServerName', @_id
+      Session.set 'editingDeployTargetName', @_id
       Meteor.flush() # force DOM redraw, so we can focus the edit field
       Helpers.activateInput tmpl.find '.text-input'
 
-Template.server.events Helpers.okCancelEvents '.serverName .text-input',
+Template.deployTarget.events Helpers.okCancelEvents '.deployTargetName .text-input',
   ok: (value) ->
-    Server.findOne(_id: @_id).update(serverName: value) unless value.length <= 0
-    Session.set 'editingServerName', null
+    DeployTarget.findOne(_id: @_id).update(deployTargetName: value) unless value.length <= 0
+    Session.set 'editingDeployTargetName', null
   cancel: ->
-    Session.set 'editingServerName', null
+    Session.set 'editingDeployTargetName', null
 
 
-_.extend Template.serverAttr,
+_.extend Template.deployTargetAttr,
   attrName:    -> @name
   attrVal:     -> @val
-  editingAttr: -> Session.equals 'editingServerAttr', "#{@sid}_#{@name}"
+  editingAttr: -> Session.equals 'editingDeployTargetAttr', "#{@sid}_#{@name}"
 
-Template.serverAttr.events
+Template.deployTargetAttr.events
   'dblclick': (e, tmpl) ->
     if Meteor.userId() and !@fixed
-      Session.set 'editingServerAttr', "#{@sid}_#{@name}"
+      Session.set 'editingDeployTargetAttr', "#{@sid}_#{@name}"
       Meteor.flush() # force DOM redraw, so we can focus the edit field
       Helpers.activateInput tmpl.find '.text-input'
 
-Template.serverAttr.events Helpers.okCancelEvents '.text-input',
+Template.deployTargetAttr.events Helpers.okCancelEvents '.text-input',
   ok: (value) ->
     _.tap {}, (updateVals) =>
       updateVals[@dbName] = value
-      Server.findOne(_id: @sid).update(updateVals)
-    Session.set 'editingServerAttr', null
+      DeployTarget.findOne(_id: @sid).update(updateVals)
+    Session.set 'editingDeployTargetAttr', null
   cancel: ->
-    Session.set 'editingServerAttr', null
+    Session.set 'editingDeployTargetAttr', null

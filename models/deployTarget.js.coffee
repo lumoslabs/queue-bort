@@ -1,26 +1,26 @@
-class Server
+class DeployTarget
   constructor: (@attrs) ->
 
   destroy: ->
-    Server.collection.remove @attrs._id
+    DeployTarget.collection.remove @attrs._id
 
   displayedAttrs: ->
-    _.map Server.attrsForDisplay, (attr) =>
+    _.map DeployTarget.attrsForDisplay, (attr) =>
       name:   attr.displayName
       val:    @attrs[attr.dbName]
       dbName: attr.dbName
       fixed:  attr.fixed
 
   name: ->
-    @attrs.serverName
+    @attrs.deployTargetName
 
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
 
   _mongoUpdate: (params) ->
-    Server.collection.update @attrs._id, params
+    DeployTarget.collection.update @attrs._id, params
 
-  @collection: new Meteor.Collection "servers"
+  @collection: new Meteor.Collection "deploy_targets"
 
   @attrsForDisplay: [
     {displayName: 'SHA',       dbName: 'sha'                    },
@@ -29,20 +29,20 @@ class Server
   ]
 
   @all: ->
-    Server.collection.find()
+    DeployTarget.collection.find()
 
   @create: (attrs) ->
-    attrs.serverName = Server._newServerName() unless attrs.serverName?
-    Server.collection.insert attrs
+    attrs.deployTargetName = DeployTarget._newServerName() unless attrs.deployTargetName?
+    DeployTarget.collection.insert attrs
 
   @find: (attrs) ->
-    _.map Server.collection.find(attrs).fetch(), (q) -> new Server(q)
+    _.map DeployTarget.collection.find(attrs).fetch(), (q) -> new DeployTarget(q)
 
   @findOne: (attrs) ->
-    new Server(Server.collection.findOne attrs)
+    new DeployTarget(DeployTarget.collection.findOne attrs)
 
   @_newServerName: ->
     newName = '[new server]'
-    until Server.find(serverName: newName).length < 1
+    until DeployTarget.find(deployTargetName: newName).length < 1
       newName = "[new server #{Math.floor(Math.random() * 100000)}]"
     newName
