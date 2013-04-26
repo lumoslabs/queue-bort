@@ -22,7 +22,9 @@
     {{#each deployTargets}}
       {{> deployTarget}}
     {{/each}}
-    <div class="newDeployTarget">+</div>
+    {{#if currentUser}}
+      <div class="newDeployTarget">+</div>
+    {{/if}}
   </div>
 </template>
 

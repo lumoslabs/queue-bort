@@ -8,6 +8,7 @@ _.extend Template.queues,
 
 
 _.extend Template.deployTargetGroup,
+  currentUser:   -> Meteor.user()
   groupName:     -> @toString()
   deployTargets: -> DeployTarget.collection.find {tag: @toString()}, {sort: ['deployTargetName']}
 
