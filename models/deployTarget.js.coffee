@@ -16,6 +16,7 @@ class DeployTarget
 
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
+    _.extend @attrs, newAttrs
 
   _mongoUpdate: (params) ->
     DeployTarget.collection.update @attrs._id, params
@@ -48,7 +49,8 @@ class DeployTarget
     _.map DeployTarget.collection.find(attrs).fetch(), (q) -> new DeployTarget(q)
 
   @findOne: (attrs) ->
-    new DeployTarget(DeployTarget.collection.findOne attrs)
+    record = DeployTarget.collection.findOne attrs
+    if record? then new DeployTarget(record) else null
 
   @_newServerName: ->
     newName = '[new server]'
