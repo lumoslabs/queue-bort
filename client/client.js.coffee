@@ -1,20 +1,16 @@
 _.extend Template.queues,
   title: -> "queue-bort"
-  tags:  ->
-    tags = []
-    DeployTarget.all().forEach (ql) ->
-      tags.push(ql.tag) if ql.tag? and tags.indexOf(ql.tag) < 0
-    tags.sort()
+  envs:  -> DeployTarget.allEnvs()
 
 
 _.extend Template.deployTargetGroup,
   currentUser:   -> Meteor.user()
   groupName:     -> @toString()
-  deployTargets: -> DeployTarget.collection.find {tag: @toString()}, {sort: ['deployTargetName']}
+  deployTargets: -> DeployTarget.collection.find {env: @toString()}, {sort: ['deployTargetName']}
 
 Template.deployTargetGroup.events
   'click .newDeployTarget': (e) ->
-    DeployTarget.create tag: @toString()
+    DeployTarget.create env: @toString()
 
 
 _.extend Template.deployTarget,

@@ -31,9 +31,17 @@ class DeployTarget
   @all: ->
     DeployTarget.collection.find()
 
+  @allEnvs: ->
+    envs = []
+    DeployTarget.all().forEach (dt) ->
+      envs.push(dt.env) if dt.env? and envs.indexOf(dt.env) < 0
+    envs.sort()
+
   @create: (attrs) ->
     attrs.deployTargetName = DeployTarget._newServerName() unless attrs.deployTargetName?
     DeployTarget.collection.insert attrs
+
+  @each: (func) -> _.each DeployTarget.find({}), func
 
   @find: (attrs) ->
     _.map DeployTarget.collection.find(attrs).fetch(), (q) -> new DeployTarget(q)
