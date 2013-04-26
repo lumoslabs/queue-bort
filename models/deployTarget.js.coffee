@@ -23,9 +23,10 @@ class DeployTarget
   @collection: new Meteor.Collection "deploy_targets"
 
   @attrsForDisplay: [
-    {displayName: 'SHA',       dbName: 'sha'                    },
-    {displayName: 'Tag',       dbName: 'release_tag'            },
-    {displayName: 'In use by', dbName: 'cur_user',   fixed: true}
+    {displayName: 'SHA',            dbName: 'sha'                       },
+    {displayName: 'Tag',            dbName: 'release_tag'               },
+    {displayName: 'Polling server', dbName: 'polling_server'            },
+    {displayName: 'In use by',      dbName: 'cur_user',      fixed: true}
   ]
 
   @all: ->
