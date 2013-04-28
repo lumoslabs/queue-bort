@@ -3,7 +3,7 @@ Meteor.Router.add '/deploy_target/:target/:env.json', 'GET', (target, env) ->
   return 404 unless dt?
   JSON.stringify dt
 
-Meteor.Router.add '/deploy_target/:target/:env', 'PATCH', (target, env) ->
+Meteor.Router.add '/deploy_target/:target/:env.json', 'PATCH', (target, env) ->
   dt = DeployTarget.findOne deployTargetName: target, env: env
   return 404 unless dt?
 
