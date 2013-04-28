@@ -25,9 +25,13 @@ class DeployTarget
 
   @attrsForDisplay: [
     {displayName: 'SHA',            dbName: 'sha'                       },
-    {displayName: 'Tag',            dbName: 'release_tag'               },
-    {displayName: 'Polling server', dbName: 'polling_server'            },
+    {displayName: 'Tag / Ref',      dbName: 'release_tag'               },
     {displayName: 'In use by',      dbName: 'cur_user',      fixed: true}
+  ]
+
+  @attrsForConfig: [
+    {displayName: 'Polling server', dbName: 'polling_server' },
+    {displayName: 'Release path',   dbName: 'release_path'   }
   ]
 
   @all: ->
