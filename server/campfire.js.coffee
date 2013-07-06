@@ -1,4 +1,4 @@
-Campfire =
+@Campfire =
   config:
     token:  process.env.CAMPFIRE_TOKEN
     domain: process.env.CAMPFIRE_DOMAIN
@@ -10,6 +10,7 @@ Campfire =
       data: attrs
 
   speak: (msg) ->
+    console.log "Campfire (#{new Date}): #{msg}"
     @http 'post', '/speak', message: body: msg
 
   updateTopic: (topic) ->

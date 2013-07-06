@@ -34,12 +34,9 @@ _.extend Template.deployTarget,
   editing:     -> Session.equals 'editingDeployTargetName', @_id
 
 Template.deployTarget.events
-  'click .claim': ->
-    DeployTarget.findOne(_id: @_id).update cur_user: Meteor.user().profile.name
-  'click .unclaim': ->
-    DeployTarget.findOne(_id: @_id).update cur_user: ''
-  'click .queueUp': ->
-    console.log "implement queue"
+  'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
+  'click .unclaim': -> Meteor.call 'unclaimDeployTarget', @_id
+  'click .queueUp': -> console.log "implement queue"
 
   'click .delete': ->
     deployTarget = DeployTarget.findOne(_id: @_id)
