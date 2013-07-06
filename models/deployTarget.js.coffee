@@ -1,4 +1,4 @@
-class DeployTarget
+class @DeployTarget
   constructor: (@attrs) ->
 
   destroy: ->
