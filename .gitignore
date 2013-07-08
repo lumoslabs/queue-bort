@@ -1,1 +1,2 @@
 .dbshell
+server/config.js.coffee

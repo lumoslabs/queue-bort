@@ -9,6 +9,8 @@ Meteor.startup ->
     DeployTarget.create deployTargetName: 'lumos_rails', env: 'Production', polling_server: 'app-worker3'
     DeployTarget.create deployTargetName: 'lumos_rails', env: 'Staging',    polling_server: 'staging'
 
+  Campfire.init QBConfig.campfire
+
 Meteor.methods
   claimDeployTarget: (attrs) ->
     #TODO some form of security

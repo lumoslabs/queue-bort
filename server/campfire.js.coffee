@@ -1,22 +1,23 @@
 @Campfire =
-  config:
-    token:  process.env.CAMPFIRE_TOKEN
-    domain: process.env.CAMPFIRE_DOMAIN
-    room:   process.env.CAMPFIRE_ROOM
+  config: {}
+
+  init: (attrs) ->
+    _.extend @config, attrs
+    @config.url    = "https://#{@config.domain}.campfirenow.com/room/#{@config.room}"
 
   http: (method, url, attrs) ->
+    return false unless @config.enabled
     Meteor.http.call method, "#{@config.url}#{url}.json",
       auth: "#{@config.token}:X",
       data: attrs
+    true
 
   speak: (msg) ->
-    console.log "Campfire (#{new Date}): #{msg}"
-    @http 'post', '/speak', message: body: msg
+    if @http('post', '/speak', message: body: msg)
+      console.log "Campfire (#{new Date}): #{msg}"
 
   updateTopic: (topic) ->
     @http 'put', '', room: topic: topic
-
-Campfire.config.url = "https://#{Campfire.config.domain}.campfirenow.com/room/#{Campfire.config.room}"
 
 Meteor.methods
   speakToCampfire:     (msg)   -> Campfire.speak       msg

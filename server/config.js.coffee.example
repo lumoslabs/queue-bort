@@ -1,0 +1,7 @@
+@QBConfig =
+
+  campfire:
+    enabled: true
+    room:    'campfire room number'
+    domain:  'campfire domain'
+    token:   'campfire auth token'
