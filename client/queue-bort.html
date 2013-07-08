@@ -32,15 +32,7 @@
   <div class="deployTarget">
 
     <div class="server">
-      {{#if editing}}
-        <div class="edit">
-          <input class="text-input" id="deployTarget-name-input" type="text" value="{{server}}" />
-        </div>
-      {{else}}
-        <div class="display">
-          <h4 class="name">{{server}}</h4>
-        </div>
-      {{/if}}
+      {{> clickableInput clickVarsForServer}}
     </div>
 
     <div class="attrs">
@@ -64,9 +56,5 @@
 
 <template name="deployTargetAttr">
   <span class="attrName">{{attrName}}: </span>
-  {{#if editingAttr}}
-    <input class="text-input" id="deployTarget-name-input" type="text" value="{{attrVal}}" />
-  {{else}}
-    <span class="attrVal">{{attrVal}}</span>
-  {{/if}}
+  {{> clickableInput clickVarsForAttr}}
 </template>

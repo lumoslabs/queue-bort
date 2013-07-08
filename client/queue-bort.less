@@ -13,6 +13,10 @@ ol {
   float: right;
 }
 
+.clickable-display {
+  display: inline-block;
+}
+
 #queues {
   margin-top: 20px;
 
@@ -50,8 +54,14 @@ ol {
 
       width: 24em;
 
-      h4 {
-        font-weight: normal;
+      .server {
+        margin-bottom: 10px;
+
+        .clickable-display {
+          margin-top:    5px;
+          margin-bottom: 15px;
+          font-size:     150%;
+        }
       }
 
       .attrs {
@@ -79,8 +89,7 @@ ol {
           width:   7em;
         }
 
-        .attrVal {
-          display:     inline-block;
+        .clickable-display {
           width:       16em;
           overflow:    hidden;
           font-weight: bold;

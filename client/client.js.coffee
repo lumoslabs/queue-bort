@@ -31,7 +31,13 @@ _.extend Template.deployTarget,
       queueUp: "Get in line"
     texts[Template.deployTarget.claimClass.apply(@)]
   currentUser: -> Meteor.user()
-  editing:     -> Session.equals 'editingDeployTargetName', @_id
+
+  clickVarsForServer: -> _.extend @,
+    sessionSuffix: 'ServerName'
+    varName:       'server'
+    editable:   -> true
+    sessionVal: -> @_id
+    update:     (val) -> DeployTarget.findOne(_id: @_id).update(server: val) unless val.length <= 0
 
 Template.deployTarget.events
   'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
@@ -42,37 +48,19 @@ Template.deployTarget.events
     deployTarget = DeployTarget.findOne(_id: @_id)
     deployTarget.destroy() if confirm "Delete #{deployTarget.name()}?"
 
-  'dblclick .name': (e, tmpl) ->
-    if Meteor.userId()
-      Session.set 'editingDeployTargetName', @_id
-      Meteor.flush() # force DOM redraw, so we can focus the edit field
-      Helpers.activateInput tmpl.find '.text-input'
-
-Template.deployTarget.events Helpers.okCancelEvents '.server .text-input',
-  ok: (value) ->
-    DeployTarget.findOne(_id: @_id).update(server: value) unless value.length <= 0
-    Session.set 'editingDeployTargetName', null
-  cancel: ->
-    Session.set 'editingDeployTargetName', null
-
 
 _.extend Template.deployTargetAttr,
-  attrName:    -> @name
-  attrVal:     -> @val
-  editingAttr: -> Session.equals 'editingDeployTargetAttr', "#{@dtid}_#{@name}"
+  attrName: -> @name
+
+  clickVarsForAttr: -> _.extend @,
+    sessionSuffix: 'DeployTargetAttr'
+    varName:       'val'
+    editable:   -> !@fixed
+    sessionVal: -> "#{@dtid}_#{@name}"
+    update: (val) ->
+      updateVals = {}
+      updateVals[@dbName] = val
+      DeployTarget.findOne(_id: @dtid).update(updateVals)
 
 Template.deployTargetAttr.events
-  'dblclick': (e, tmpl) ->
-    if Meteor.userId() and !@fixed
-      Session.set 'editingDeployTargetAttr', "#{@dtid}_#{@name}"
-      Meteor.flush() # force DOM redraw, so we can focus the edit field
-      Helpers.activateInput tmpl.find '.text-input'
-
-Template.deployTargetAttr.events Helpers.okCancelEvents '.text-input',
-  ok: (value) ->
-    _.tap {}, (updateVals) =>
-      updateVals[@dbName] = value
-      DeployTarget.findOne(_id: @dtid).update(updateVals)
-    Session.set 'editingDeployTargetAttr', null
-  cancel: ->
-    Session.set 'editingDeployTargetAttr', null
+  'dblclick': (e, tmpl) -> Template.clickableInput.activateInput(e, tmpl)

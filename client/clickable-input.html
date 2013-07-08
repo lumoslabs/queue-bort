@@ -1,0 +1,7 @@
+<template name="clickableInput">
+  {{#if editing}}
+    <input class="text-input" id="clickable-input" type="text" value="{{inputVal}}" />
+  {{else}}
+    <span class="clickable-display">{{inputVal}}</span>
+  {{/if}}
+</template>
