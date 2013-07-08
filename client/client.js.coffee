@@ -6,7 +6,7 @@ _.extend Template.queues,
 _.extend Template.deployTargetGroup,
   currentUser:   -> Meteor.user()
   groupName:     -> @toString()
-  deployTargets: -> DeployTarget.collection.find {env: @toString()}, {sort: ['deployTargetName']}
+  deployTargets: -> DeployTarget.collection.find {env: @toString()}, {sort: ['server']}
 
 Template.deployTargetGroup.events
   'click .newDeployTarget': (e) ->
@@ -48,9 +48,9 @@ Template.deployTarget.events
       Meteor.flush() # force DOM redraw, so we can focus the edit field
       Helpers.activateInput tmpl.find '.text-input'
 
-Template.deployTarget.events Helpers.okCancelEvents '.deployTargetName .text-input',
+Template.deployTarget.events Helpers.okCancelEvents '.server .text-input',
   ok: (value) ->
-    DeployTarget.findOne(_id: @_id).update(deployTargetName: value) unless value.length <= 0
+    DeployTarget.findOne(_id: @_id).update(server: value) unless value.length <= 0
     Session.set 'editingDeployTargetName', null
   cancel: ->
     Session.set 'editingDeployTargetName', null

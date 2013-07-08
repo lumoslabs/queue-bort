@@ -11,8 +11,7 @@ class @DeployTarget
       dbName: attr.dbName
       fixed:  attr.fixed
 
-  name: ->
-    @attrs.deployTargetName
+  name: -> "#{@attrs.app}/#{@attrs.server}"
 
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
@@ -44,7 +43,7 @@ class @DeployTarget
     envs.sort()
 
   @create: (attrs) ->
-    attrs.deployTargetName = DeployTarget._newServerName() unless attrs.deployTargetName?
+    attrs.server = DeployTarget._newServerName() unless attrs.server?
     DeployTarget.collection.insert attrs
 
   @each: (func) -> _.each DeployTarget.find({}), func
@@ -58,6 +57,6 @@ class @DeployTarget
 
   @_newServerName: ->
     newName = '[new server]'
-    until DeployTarget.find(deployTargetName: newName).length < 1
+    until DeployTarget.find(server: newName).length < 1
       newName = "[new server #{Math.floor(Math.random() * 100000)}]"
     newName

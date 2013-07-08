@@ -31,14 +31,14 @@
 <template name="deployTarget">
   <div class="deployTarget">
 
-    <div class="deployTargetName">
+    <div class="server">
       {{#if editing}}
         <div class="edit">
-          <input class="text-input" id="deployTarget-name-input" type="text" value="{{deployTargetName}}" />
+          <input class="text-input" id="deployTarget-name-input" type="text" value="{{server}}" />
         </div>
       {{else}}
         <div class="display">
-          <h4 class="name">{{deployTargetName}}</h4>
+          <h4 class="name">{{server}}</h4>
         </div>
       {{/if}}
     </div>
