@@ -1,6 +1,9 @@
 class @DeployTarget
   constructor: (@attrs) ->
 
+  addToQueue: (user) ->
+    console.log "balsd"
+
   destroy: ->
     DeployTarget.collection.remove @attrs._id
 
@@ -60,3 +63,21 @@ class @DeployTarget
     until DeployTarget.find(server: newName).length < 1
       newName = "[new server #{Math.floor(Math.random() * 100000)}]"
     newName
+
+
+if Meteor.isServer
+  Meteor.methods
+    claimDeployTarget: (attrs) ->
+      #TODO some form of security
+      dt   = DeployTarget.findOne(_id: attrs.id)
+      user = attrs.user
+      dt.update cur_user: user
+      Campfire.speak "#{dt.name()} claimed by #{user}"
+
+    unclaimDeployTarget: (id) ->
+      dt   = DeployTarget.findOne(_id: id)
+      user = dt.attrs.cur_user
+      dt.update cur_user: ''
+      Campfire.speak "#{dt.name()} released by #{user}"
+
+    queueUp: (attrs) -> DeployTarget.findOne(_id: attrs.id).addToQueue attrs.user
