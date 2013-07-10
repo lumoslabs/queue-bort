@@ -32,13 +32,6 @@ _.extend Template.deployTarget,
     texts[Template.deployTarget.claimClass.apply(@)]
   currentUser: -> Meteor.user()
 
-  clickVarsForServer: -> _.extend @,
-    sessionSuffix: 'ServerName'
-    varName:       'server'
-    editable:   -> true
-    sessionVal: -> @_id
-    update:     (val) -> DeployTarget.findOne(_id: @_id).update(server: val) unless val.length <= 0
-
 Template.deployTarget.events
   'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
   'click .unclaim': -> Meteor.call 'unclaimDeployTarget', @_id
