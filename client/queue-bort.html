@@ -22,7 +22,7 @@
     {{#each deployTargets}}
       {{> deployTarget}}
     {{/each}}
-    {{#if currentUser}}
+    {{#if adminUser}}
       <div class="newDeployTarget">+</div>
     {{/if}}
   </div>
@@ -47,7 +47,9 @@
 
     {{#if currentUser}}
       <div class="controls">
-        <div class="delete">x</div>
+        {{#if adminUser}}
+          <div class="delete">x</div>
+        {{/if}}
         <div class="claimer {{claimClass}}">{{claimText}}</div>
       </div>
     {{/if}}
