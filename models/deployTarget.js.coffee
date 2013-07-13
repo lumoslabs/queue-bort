@@ -2,7 +2,7 @@ class @DeployTarget
   constructor: (@attrs) ->
 
   addToQueue: (user) ->
-    console.log "balsd"
+    @push 'user_queue', user
 
   destroy: ->
     DeployTarget.collection.remove @attrs._id
@@ -16,18 +16,29 @@ class @DeployTarget
 
   name: -> "#{@attrs.app}/#{@attrs.server}"
 
+  push: (attr, val) ->
+    params = {}
+    params[attr] = val
+    @_mongoUpdate $push: params
+    @_reload attr
+
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
     _.extend @attrs, newAttrs
 
+  userQueue: -> @attrs.user_queue || []
+
   _mongoUpdate: (params) ->
     DeployTarget.collection.update @attrs._id, params
+
+  _reload: (attr) ->
+    @attrs[attr] = DeployTarget.collection.findOne(@attrs._id)[attr]
 
   @collection: new Meteor.Collection "deploy_targets"
 
   @attrsForDisplay: [
     {displayName: 'SHA',            dbName: 'sha'                       },
-    {displayName: 'Tag / Ref',      dbName: 'release_tag'               },
+    # {displayName: 'Tag / Ref',      dbName: 'release_tag'               },
     {displayName: 'In use by',      dbName: 'cur_user',      fixed: true}
   ]
 
