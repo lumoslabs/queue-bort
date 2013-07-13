@@ -16,6 +16,7 @@ Template.deployTargetGroup.events
 _.extend Template.deployTarget,
   attrs: ->
     _.map DeployTarget.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, dtid: @_id
+
   claimClass: ->
     curOwner = DeployTarget.findOne(_id: @_id).attrs.cur_user
     if curOwner == Meteor.user().profile.name
@@ -30,9 +31,16 @@ _.extend Template.deployTarget,
       unclaim: "UNCLAIM"
       queueUp: "Get in line"
     texts[Template.deployTarget.claimClass.apply(@)]
-  currentUser: -> Meteor.user()
-  queueUsers:  -> DeployTarget.findOne(_id: @_id).userQueue()
-  queueExists: -> DeployTarget.findOne(_id: @_id).userQueue().length > 0
+  userClaimClass: ->
+    classes =
+      claim:   'free'
+      unclaim: 'owned-by-current'
+      queueUp: 'owned-by-other'
+    classes[Template.deployTarget.claimClass.apply(@)]
+
+  currentUser:    -> Meteor.user()
+  queueUsers:     -> DeployTarget.findOne(_id: @_id).userQueue()
+  queueExists:    -> DeployTarget.findOne(_id: @_id).userQueue().length > 0
 
 Template.deployTarget.events
   'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
