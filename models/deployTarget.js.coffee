@@ -22,6 +22,8 @@ class @DeployTarget
     @_mongoUpdate $push: params
     @_reload attr
 
+  queuePos: (user) -> @userQueue().indexOf(user) + 1
+
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
     _.extend @attrs, newAttrs

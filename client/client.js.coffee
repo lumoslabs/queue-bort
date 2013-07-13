@@ -18,24 +18,31 @@ _.extend Template.deployTarget,
     _.map DeployTarget.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, dtid: @_id
 
   claimClass: ->
-    curOwner = DeployTarget.findOne(_id: @_id).attrs.cur_user
-    if curOwner == Meteor.user().profile.name
+    dt      = DeployTarget.findOne(_id: @_id)
+    dtOwner = dt.attrs.cur_user
+    curUser = Meteor.user().profile.name
+    if dtOwner == curUser
       "unclaim"
-    else if curOwner? and curOwner.length > 0
-      "queueUp"
+    else if dtOwner? and dtOwner.length > 0
+      if curUser in dt.userQueue()
+        "alreadyQueued"
+      else
+        "queueUp"
     else
       "claim"
   claimText: ->
     texts =
-      claim:   "CLAIM ME"
-      unclaim: "UNCLAIM"
-      queueUp: "Get in line"
+      claim:         "CLAIM ME"
+      unclaim:       "UNCLAIM"
+      alreadyQueued: "##{DeployTarget.findOne(_id: @_id).queuePos(Meteor.user().profile.name)} in line"
+      queueUp:       "Get in line"
     texts[Template.deployTarget.claimClass.apply(@)]
   userClaimClass: ->
     classes =
-      claim:   'free'
-      unclaim: 'owned-by-current'
-      queueUp: 'owned-by-other'
+      claim:         'free'
+      unclaim:       'owned-by-current'
+      alreadyQueued: 'owned-by-other'
+      queueUp:       'owned-by-other'
     classes[Template.deployTarget.claimClass.apply(@)]
 
   currentUser:    -> Meteor.user()
