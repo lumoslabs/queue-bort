@@ -45,16 +45,18 @@
       </ol>
     </div>
 
-    {{#if showQueue}}
-      <div class="user-queue">
-        <h5>Queue</h5>
+    <div class="user-queue">
+      <h5>Queue</h5>
+      {{#if queueExists}}
         <ol>
           {{#each queueUsers}}
             <li>{{ this }}</li>
           {{/each}}
         </ol>
-      </div>
-    {{/if}}
+      {{else}}
+        <p class="empty-queue">empty</p>
+      {{/if}}
+    </div>
 
     {{#if currentUser}}
       <div class="controls">

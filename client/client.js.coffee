@@ -32,7 +32,7 @@ _.extend Template.deployTarget,
     texts[Template.deployTarget.claimClass.apply(@)]
   currentUser: -> Meteor.user()
   queueUsers:  -> DeployTarget.findOne(_id: @_id).userQueue()
-  showQueue:   -> DeployTarget.findOne(_id: @_id).userQueue().length > 0
+  queueExists: -> DeployTarget.findOne(_id: @_id).userQueue().length > 0
 
 Template.deployTarget.events
   'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
