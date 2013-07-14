@@ -13,7 +13,8 @@
     true
 
   speak: (msg) ->
-    if @http('post', '/speak', message: body: msg)
+    fullMsg = "#{@config.emoji} #{msg}"
+    if @http('post', '/speak', message: body: fullMsg)
       console.log "Campfire (#{new Date}): #{msg}"
 
   updateTopic: (topic) ->

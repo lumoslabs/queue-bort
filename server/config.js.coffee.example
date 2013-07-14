@@ -5,3 +5,4 @@
     room:    'campfire room number'
     domain:  'campfire domain'
     token:   'campfire auth token'
+    emoji:   ':fast_forward:'
