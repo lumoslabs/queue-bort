@@ -3,6 +3,15 @@ class @DeployTarget
 
   addToQueue:      (user) -> @push 'user_queue', user
   removeFromQueue: (user) -> @pull 'user_queue', user
+  unclaim: ->
+    currentQueue = @userQueue()
+    newOwner = currentQueue.shift()
+    if newOwner?
+      @update cur_user: newOwner, user_queue: currentQueue
+      newOwner
+    else
+      @update cur_user: ''
+      null
 
   destroy: ->
     DeployTarget.collection.remove @attrs._id
@@ -95,8 +104,18 @@ if Meteor.isServer
     unclaimDeployTarget: (id) ->
       dt   = DeployTarget.findOne(_id: id)
       user = dt.attrs.cur_user
-      dt.update cur_user: ''
-      Campfire.speak "#{dt.name()} released by #{user}"
+      newOwner = dt.unclaim()
+      newOwnerText = if newOwner? then "reserved for #{newOwner}" else "free"
+      Campfire.speak "#{dt.name()} released by #{user}; now #{newOwnerText}"
 
-    queueUp: (attrs) -> DeployTarget.findOne(_id: attrs.id).addToQueue      attrs.user
-    dequeue: (attrs) -> DeployTarget.findOne(_id: attrs.id).removeFromQueue attrs.user
+    queueUp: (attrs) ->
+      dt   = DeployTarget.findOne(_id: attrs.id)
+      user = attrs.user
+      dt.addToQueue user
+      Campfire.speak "#{user} queued up for #{dt.name()}"
+
+    dequeue: (attrs) ->
+      dt   = DeployTarget.findOne(_id: attrs.id)
+      user = attrs.user
+      dt.removeFromQueue user
+      Campfire.speak "#{user} left queue for #{dt.name()}"
