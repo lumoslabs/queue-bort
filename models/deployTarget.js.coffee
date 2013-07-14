@@ -1,8 +1,8 @@
 class @DeployTarget
   constructor: (@attrs) ->
 
-  addToQueue: (user) ->
-    @push 'user_queue', user
+  addToQueue:      (user) -> @push 'user_queue', user
+  removeFromQueue: (user) -> @pull 'user_queue', user
 
   destroy: ->
     DeployTarget.collection.remove @attrs._id
@@ -16,11 +16,8 @@ class @DeployTarget
 
   name: -> "#{@attrs.app}/#{@attrs.server}"
 
-  push: (attr, val) ->
-    params = {}
-    params[attr] = val
-    @_mongoUpdate $push: params
-    @_reload attr
+  pull: (attr, val) -> @_mongoArrayUpdate '$pull', attr, val
+  push: (attr, val) -> @_mongoArrayUpdate '$push', attr, val
 
   queuePos: (user) -> @userQueue().indexOf(user) + 1
 
@@ -29,6 +26,14 @@ class @DeployTarget
     _.extend @attrs, newAttrs
 
   userQueue: -> @attrs.user_queue || []
+
+  _mongoArrayUpdate: (operator, attr, val) ->
+    params = {}
+    params[attr] = val
+    mongoCmd = {}
+    mongoCmd[operator] = params
+    @_mongoUpdate mongoCmd
+    @_reload attr
 
   _mongoUpdate: (params) ->
     DeployTarget.collection.update @attrs._id, params
@@ -93,4 +98,5 @@ if Meteor.isServer
       dt.update cur_user: ''
       Campfire.speak "#{dt.name()} released by #{user}"
 
-    queueUp: (attrs) -> DeployTarget.findOne(_id: attrs.id).addToQueue attrs.user
+    queueUp: (attrs) -> DeployTarget.findOne(_id: attrs.id).addToQueue      attrs.user
+    dequeue: (attrs) -> DeployTarget.findOne(_id: attrs.id).removeFromQueue attrs.user

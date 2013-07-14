@@ -25,24 +25,24 @@ _.extend Template.deployTarget,
       "unclaim"
     else if dtOwner? and dtOwner.length > 0
       if curUser in dt.userQueue()
-        "alreadyQueued"
+        "dequeue"
       else
         "queueUp"
     else
       "claim"
   claimText: ->
     texts =
-      claim:         "CLAIM ME"
-      unclaim:       "UNCLAIM"
-      alreadyQueued: "##{DeployTarget.findOne(_id: @_id).queuePos(Meteor.user().profile.name)} in line"
-      queueUp:       "Get in line"
+      claim:   "CLAIM ME"
+      unclaim: "UNCLAIM"
+      dequeue: "Dequeue (##{DeployTarget.findOne(_id: @_id).queuePos(Meteor.user().profile.name)} in line)"
+      queueUp: "Get in line"
     texts[Template.deployTarget.claimClass.apply(@)]
   userClaimClass: ->
     classes =
-      claim:         'free'
-      unclaim:       'owned-by-current'
-      alreadyQueued: 'owned-by-other'
-      queueUp:       'owned-by-other'
+      claim:   'free'
+      unclaim: 'owned-by-current'
+      dequeue: 'owned-by-other'
+      queueUp: 'owned-by-other'
     classes[Template.deployTarget.claimClass.apply(@)]
 
   currentUser:    -> Meteor.user()
@@ -53,6 +53,7 @@ Template.deployTarget.events
   'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
   'click .unclaim': -> Meteor.call 'unclaimDeployTarget', @_id
   'click .queueUp': -> Meteor.call 'queueUp', id: @_id, user: Meteor.user().profile.name
+  'click .dequeue': -> Meteor.call 'dequeue', id: @_id, user: Meteor.user().profile.name
 
   'click .delete': ->
     deployTarget = DeployTarget.findOne(_id: @_id)
