@@ -2,6 +2,12 @@
   {{#if editing}}
     <input class="text-input" id="clickable-input" type="text" value="{{inputVal}}" />
   {{else}}
-    <span class="clickable-display">{{inputVal}}</span>
+    <span class="clickable-display">
+      {{#if link}}
+        <a href="{{link}}" target="_blank">{{inputVal}}</a>
+      {{else}}
+        {{inputVal}}
+      {{/if}}
+    </span>
   {{/if}}
 </template>

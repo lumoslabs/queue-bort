@@ -1,7 +1,8 @@
 _.extend Template.clickableInput,
-  editing:       -> Session.equals Template.clickableInput.sessionVar(), @sessionVal()
-  inputVal:      -> @[@varName]
-  sessionVar:    -> "editing#{@sessionSuffix}"
+  editing:         -> Session.equals Template.clickableInput.sessionVar(), @sessionVal()
+  inputVal:        -> @[@varName]
+  link:            -> @link()
+  sessionVar:      -> "editing#{@sessionSuffix}"
   activateInput: (e, tmpl) =>
     if Meteor.userId() and tmpl.data.editable()
       Session.set Template.clickableInput.sessionVar(), tmpl.data.sessionVal()

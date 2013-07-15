@@ -13,6 +13,8 @@ class @DeployTarget
       @update cur_user: ''
       null
 
+  deployed: (sha) -> @update sha: sha
+
   destroy: ->
     DeployTarget.collection.remove @attrs._id
 
@@ -29,6 +31,8 @@ class @DeployTarget
   push: (attr, val) -> @_mongoArrayUpdate '$push', attr, val
 
   queuePos: (user) -> @userQueue().indexOf(user) + 1
+
+  repoLink: -> (App.findOne name: @attrs.app)?.repoLink()
 
   update: (newAttrs) ->
     @_mongoUpdate $set: newAttrs
