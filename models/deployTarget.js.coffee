@@ -57,8 +57,7 @@ class @DeployTarget
   @collection: new Meteor.Collection "deploy_targets"
 
   @attrsForDisplay: [
-    {displayName: 'SHA',            dbName: 'sha'                       },
-    # {displayName: 'Tag / Ref',      dbName: 'release_tag'               },
+    {displayName: 'Release',        dbName: 'sha'                       },
     {displayName: 'In use by',      dbName: 'cur_user',      fixed: true}
   ]
 
