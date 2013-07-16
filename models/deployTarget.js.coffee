@@ -1,7 +1,5 @@
-class @DeployTarget extends Module
-  @extend  MongoModel.classProps
-  @include MongoModel.instanceProps
-  constructor: (@attrs) ->
+class @DeployTarget extends MongoModel
+  @collection: new Meteor.Collection "deploy_targets"
 
   addToQueue:      (user) -> @push 'user_queue', user
   removeFromQueue: (user) -> @pull 'user_queue', user
@@ -31,8 +29,6 @@ class @DeployTarget extends Module
   repoLink: -> (App.findOne name: @attrs.app)?.repoLink()
 
   userQueue: -> @attrs.user_queue || []
-
-  @collection: new Meteor.Collection "deploy_targets"
 
   @attrsForDisplay: [
     {displayName: 'Release',        dbName: 'sha'                       },

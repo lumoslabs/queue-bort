@@ -1,8 +1,4 @@
-class @App extends Module
-  @extend  MongoModel.classProps
-  @include MongoModel.instanceProps
-  constructor: (@attrs) ->
+class @App extends MongoModel
+  @collection: new Meteor.Collection "apps"
 
   repoLink: -> "#{@attrs.repo_link}/commits"
-
-  @collection: new Meteor.Collection "apps"

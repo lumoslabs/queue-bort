@@ -1,43 +1,39 @@
-class @Module
-  @extend:  (obj) -> @[k]   = v for k, v of obj
-  @include: (obj) -> @::[k] = v for k, v of obj
-
 class @MongoModel
-  @classProps:
-    all: -> @collection.find()
+  constructor: (@attrs) ->
 
-    create: (attrs) -> @collection.insert attrs
+  @all: -> @collection.find()
 
-    each: (func) -> _.each @find({}), func
+  @create: (attrs) -> @collection.insert attrs
 
-    find: (attrs) -> _.map @collection.find(attrs).fetch(), (q) -> new @(q)
+  @each: (func) -> _.each @find({}), func
 
-    findOne: (attrs) ->
-      record = @collection.findOne attrs
-      if record? then new @(record) else null
+  @find: (attrs) -> _.map @collection.find(attrs).fetch(), (q) -> new @(q)
 
-  @instanceProps:
-    collection: -> @constructor.collection
+  @findOne: (attrs) ->
+    record = @collection.findOne attrs
+    if record? then new @(record) else null
 
-    destroy: -> @collection().remove @attrs._id
+  collection: -> @constructor.collection
 
-    pull: (attr, val) -> @_mongoArrayUpdate '$pull', attr, val
-    push: (attr, val) -> @_mongoArrayUpdate '$push', attr, val
+  destroy: -> @collection().remove @attrs._id
 
-    update: (newAttrs) ->
-      @_mongoUpdate $set: newAttrs
-      _.extend @attrs, newAttrs
+  pull: (attr, val) -> @_mongoArrayUpdate '$pull', attr, val
+  push: (attr, val) -> @_mongoArrayUpdate '$push', attr, val
+
+  update: (newAttrs) ->
+    @_mongoUpdate $set: newAttrs
+    _.extend @attrs, newAttrs
 
 
-    # PRIVATE
-    _mongoArrayUpdate: (operator, attr, val) ->
-      params = {}
-      params[attr] = val
-      mongoCmd = {}
-      mongoCmd[operator] = params
-      @_mongoUpdate mongoCmd
-      @_reload attr
+  # PRIVATE
+  _mongoArrayUpdate: (operator, attr, val) ->
+    params = {}
+    params[attr] = val
+    mongoCmd = {}
+    mongoCmd[operator] = params
+    @_mongoUpdate mongoCmd
+    @_reload attr
 
-    _mongoUpdate: (params) -> @collection().update @attrs._id, params
+  _mongoUpdate: (params) -> @collection().update @attrs._id, params
 
-    _reload: (attr) -> @attrs[attr] = @collection().findOne(@attrs._id)[attr]
+  _reload: (attr) -> @attrs[attr] = @collection().findOne(@attrs._id)[attr]
