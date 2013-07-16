@@ -1,4 +1,6 @@
-class @DeployTarget
+class @DeployTarget extends Module
+  @extend  MongoModel.classProps
+  @include MongoModel.instanceProps
   constructor: (@attrs) ->
 
   addToQueue:      (user) -> @push 'user_queue', user
@@ -15,9 +17,6 @@ class @DeployTarget
 
   deployed: (sha) -> @update sha: sha
 
-  destroy: ->
-    DeployTarget.collection.remove @attrs._id
-
   displayedAttrs: ->
     _.map DeployTarget.attrsForDisplay, (attr) =>
       name:   attr.displayName
@@ -27,32 +26,11 @@ class @DeployTarget
 
   name: -> "#{@attrs.app}/#{@attrs.server}"
 
-  pull: (attr, val) -> @_mongoArrayUpdate '$pull', attr, val
-  push: (attr, val) -> @_mongoArrayUpdate '$push', attr, val
-
   queuePos: (user) -> @userQueue().indexOf(user) + 1
 
   repoLink: -> (App.findOne name: @attrs.app)?.repoLink()
 
-  update: (newAttrs) ->
-    @_mongoUpdate $set: newAttrs
-    _.extend @attrs, newAttrs
-
   userQueue: -> @attrs.user_queue || []
-
-  _mongoArrayUpdate: (operator, attr, val) ->
-    params = {}
-    params[attr] = val
-    mongoCmd = {}
-    mongoCmd[operator] = params
-    @_mongoUpdate mongoCmd
-    @_reload attr
-
-  _mongoUpdate: (params) ->
-    DeployTarget.collection.update @attrs._id, params
-
-  _reload: (attr) ->
-    @attrs[attr] = DeployTarget.collection.findOne(@attrs._id)[attr]
 
   @collection: new Meteor.Collection "deploy_targets"
 
@@ -66,9 +44,6 @@ class @DeployTarget
     {displayName: 'Release path',   dbName: 'release_path'   }
   ]
 
-  @all: ->
-    DeployTarget.collection.find()
-
   @allEnvs: ->
     envs = []
     DeployTarget.all().forEach (dt) ->
@@ -78,15 +53,6 @@ class @DeployTarget
   @create: (attrs) ->
     attrs.server = DeployTarget._newServerName() unless attrs.server?
     DeployTarget.collection.insert attrs
-
-  @each: (func) -> _.each DeployTarget.find({}), func
-
-  @find: (attrs) ->
-    _.map DeployTarget.collection.find(attrs).fetch(), (q) -> new DeployTarget(q)
-
-  @findOne: (attrs) ->
-    record = DeployTarget.collection.findOne attrs
-    if record? then new DeployTarget(record) else null
 
   @_newServerName: ->
     newName = '[new server]'
