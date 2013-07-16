@@ -20,10 +20,10 @@ _.extend Template.deployTarget,
   claimClass: ->
     dt      = DeployTarget.findOne(_id: @_id)
     dtOwner = dt.attrs.cur_user
-    curUser = Meteor.user().profile.name
+    curUser = Meteor.user()?.profile?.name
     if dtOwner == curUser
       "unclaim"
-    else if dtOwner? and dtOwner.length > 0
+    else if dtOwner?.length > 0
       if curUser in dt.userQueue()
         "dequeue"
       else
