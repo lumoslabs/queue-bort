@@ -13,7 +13,7 @@
     true
 
   speak: (msg) ->
-    fullMsg = "#{@config.emoji} #{msg}"
+    fullMsg = "#{@config.emoji} #{msg} [#{Meteor.absoluteUrl()}]"
     if @http('post', '/speak', message: body: fullMsg)
       console.log "Campfire (#{new Date}): #{msg}"
 
