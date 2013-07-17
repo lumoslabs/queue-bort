@@ -4,4 +4,7 @@ Accounts.onCreateUser (options, user) ->
   user
 
 Meteor.startup ->
+  unless QBConfig?
+    console.log "!!! Missing QBConfig."
+    console.log "Please add config file server/config.js.coffee (see server/config.js.coffee.example).\n"
   Campfire.init QBConfig.campfire
