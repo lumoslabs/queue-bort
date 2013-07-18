@@ -31,7 +31,7 @@ class @DeployTarget extends MongoModel
   userQueue: -> @attrs.user_queue || []
 
   @attrsForDisplay: [
-    {displayName: 'Release',        dbName: 'sha'                       },
+    {displayName: 'Release',        dbName: 'ref'                       },
     {displayName: 'In use by',      dbName: 'cur_user',      fixed: true}
   ]
 

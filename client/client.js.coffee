@@ -69,12 +69,21 @@ _.extend Template.deployTargetAttr,
     editable:   -> !@fixed
     sessionVal: -> "#{@dtid}_#{@name}"
     link: ->
+      dt  = DeployTarget.findOne(_id: @dtid)
       val = @[@varName]
-      repoLink = DeployTarget.findOne(_id: @dtid)?.repoLink()
-      if val?.length > 0 and @dbName is 'sha' and repoLink?
+      if @dbName is 'ref'
+        val = dt.attrs.sha if dt.attrs.sha?.length > 0
+      repoLink = dt.repoLink()
+      if val?.length > 0 and @dbName is 'ref' and repoLink?
         "#{repoLink}/#{val}"
       else
         null
+    linkDisplayVal: ->
+      val = @[@varName]
+      if @dbName is 'ref'
+        dt = DeployTarget.findOne(_id: @dtid)
+        val = DeployTarget.findOne(_id: @dtid).attrs.sha unless val?.length > 0
+      val
     update: (val) ->
       updateVals = {}
       updateVals[@dbName] = val
