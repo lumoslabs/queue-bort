@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export PORT=5100
+export ROOT_URL=www.example.com:$PORT
+
+mrt -p $PORT

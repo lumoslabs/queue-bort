@@ -9,6 +9,8 @@ Install and run:
 - clone queue-bort repo
 - `cp server/config.js.coffee.example server/config.js.coffee`
 - fill in values in `server/config.js.coffee`
-- run server on port XXXX: `mrt -p XXXX`
-- to run with a different host URL than `localhost`, set env var ROOT_URL (for allowing remote users to log in via Github); e.g., `ROOT_URL=www.example.com:5100 mrt -p 5100`
+- `cp qb.example qb`
+- fill in ROOT_URL and PORT in `qb`
+- `chmod +x qb`
+- run: `./qb`
 - configure OAuth with "Configure GitHub Login" button in upper right

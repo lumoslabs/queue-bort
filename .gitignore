@@ -1,2 +1,3 @@
 .dbshell
 server/config.js.coffee
+qb
