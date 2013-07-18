@@ -13,7 +13,7 @@ class @DeployTarget extends MongoModel
       @update cur_user: ''
       null
 
-  deployed: (sha) -> @update sha: sha
+  deployed: (attrs) -> @update attrs
 
   displayedAttrs: ->
     _.map DeployTarget.attrsForDisplay, (attr) =>

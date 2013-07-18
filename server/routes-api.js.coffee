@@ -16,8 +16,9 @@ Meteor.Router.add '/deploy_to/:app/:server.json', 'POST', (app, server) ->
   return 404 unless dt?
 
   sha = @request.body.sha
+  ref = @request.body.ref
   return 400 unless sha?
 
-  dt.deployed sha
+  dt.deployed sha: sha, ref: ref
 
   JSON.stringify dt
