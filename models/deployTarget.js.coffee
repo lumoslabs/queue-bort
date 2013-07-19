@@ -13,7 +13,11 @@ class @DeployTarget extends MongoModel
       @update cur_user: ''
       null
 
-  commitMsg: => if @attrs.commit? then "#{@attrs.commit.author}: #{@attrs.commit.msg}" else ""
+  MAX_MSG: 70
+  commitMsg: => if @attrs.commit? then @formattedCommit(@attrs.commit) else ""
+  formattedCommit: (commit) ->
+    s = "#{commit.author}: #{commit.msg}"
+    if s.length <= @MAX_MSG then s else s[0..@MAX_MSG - 1] + '...'
 
   deployed: (attrs) -> @update attrs
 
