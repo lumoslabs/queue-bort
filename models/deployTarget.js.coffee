@@ -13,12 +13,14 @@ class @DeployTarget extends MongoModel
       @update cur_user: ''
       null
 
+  commitMsg: => if @attrs.commit? then "#{@attrs.commit.author}: #{@attrs.commit.msg}" else ""
+
   deployed: (attrs) -> @update attrs
 
   displayedAttrs: ->
-    _.map DeployTarget.attrsForDisplay, (attr) =>
+    _.map @attrsForDisplay, (attr) =>
       name:   attr.displayName
-      val:    @attrs[attr.dbName]
+      val:    if attr.display? then attr.display.apply(@) else @attrs[attr.dbName]
       dbName: attr.dbName
       fixed:  attr.fixed
 
@@ -30,9 +32,10 @@ class @DeployTarget extends MongoModel
 
   userQueue: -> @attrs.user_queue || []
 
-  @attrsForDisplay: [
-    {displayName: 'Release',        dbName: 'ref'                       },
-    {displayName: 'In use by',      dbName: 'cur_user',      fixed: true}
+  attrsForDisplay: [
+    {displayName: 'Release',   dbName: 'ref'                              },
+    {displayName: 'Commit',    display: @.prototype.commitMsg, fixed: true},
+    {displayName: 'In use by', dbName: 'cur_user',             fixed: true}
   ]
 
   @attrsForConfig: [
