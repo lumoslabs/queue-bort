@@ -40,7 +40,6 @@ class @DeployTarget extends MongoModel
     if repoLink? and commitLink? then "#{repoLink}/#{commitLink}" else null
   ref: -> if @attrs.ref?.length > 0 then @attrs.ref else null
   sha: -> if @attrs.commit?.sha?.length > 0 then @attrs.commit.sha else null
-  repoLink: -> (App.findOne name: @attrs.app)?.repoLink()
 
   userQueue: -> @attrs.user_queue || []
 
