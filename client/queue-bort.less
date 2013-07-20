@@ -66,7 +66,7 @@ ol {
 
       &.owned-by-current {
         border-color: yellow;
-        .server {
+        .server, .owner.owned-by-current {
           color: yellow;
         }
       }
@@ -79,17 +79,17 @@ ol {
       }
 
       .attrs {
-        min-height: 8.5em;
+        min-height: 9em;
 
-        font-family: monospace;
         color:       magenta;
 
         ol {
           margin-left: 5px;
 
           li {
-            min-height: 30px;
+            min-height:     20px;
             vertical-align: top;
+            margin-bottom:  3px;
             span {
               vertical-align: top;
             }
@@ -103,6 +103,20 @@ ol {
         .attrName {
           display: inline-block;
           width:   7em;
+          font-family: monospace;
+        }
+
+        .attrVal {
+          display:     inline-block;
+          width:       16em;
+          overflow:    hidden;
+          font-weight: normal;
+          font-family: sans-serif;
+
+          &.release {
+            font-weight: bold;
+            font-family: monospace;
+          }
         }
 
         .clickable-display {

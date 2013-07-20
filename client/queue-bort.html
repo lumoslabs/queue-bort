@@ -39,11 +39,30 @@
 
     <div class="attrs">
       <ol>
-        {{#each attrs}}
-          <li>
-            {{> deployTargetAttr}}
-          </li>
-        {{/each}}
+
+        <li>
+          <span class="attrName">Release:</span>
+          {{#if releaseDisplay}}
+            <span class="attrVal release">
+              {{#if releaseLink}}
+                <a href="{{releaseLink}}">{{releaseDisplay}}</a>
+              {{else}}
+                {{releaseDisplay}}
+              {{/if}}
+            </span>
+          {{/if}}
+        </li>
+
+        <li>
+          <span class="attrName">Commit:</span>
+          <span class="attrVal commitMsg">{{commitMsg}}</span>
+        </li>
+
+        <li>
+          <span class="attrName">In use by:</span>
+          <span class="attrVal owner {{userClaimClass}}">{{ownerInfo}}</span>
+        </li>
+
       </ol>
     </div>
 
@@ -69,9 +88,4 @@
       </div>
     {{/if}}
   </div>
-</template>
-
-<template name="deployTargetAttr">
-  <span class="attrName">{{attrName}}: </span>
-  {{> clickableInput clickVarsForAttr}}
 </template>

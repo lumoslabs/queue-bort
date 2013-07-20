@@ -3,21 +3,23 @@ class @DeployTarget extends MongoModel
 
   addToQueue:      (user) -> @push 'user_queue', user
   removeFromQueue: (user) -> @pull 'user_queue', user
+
+  HOUR: 1000 * 60 * 60
+  DAY:  @HOUR * 24
+  allowedHours: -> 24
+
+  claim: (user) ->
+    @update cur_user: user, claimedAt: new Date, hoursRemaining: @allowedHours()
   unclaim: ->
     currentQueue = @userQueue()
     newOwner = currentQueue.shift()
     if newOwner?
-      @update cur_user: newOwner, user_queue: currentQueue
+      @update cur_user: newOwner, user_queue: currentQueue, claimedAt: new Date, hoursRemaining: @allowedHours()
       newOwner
     else
-      @update cur_user: ''
+      @update cur_user: '', claimedAt: null, hoursRemaining: null
       null
-
-  MAX_MSG: 70
-  commitMsg: => if @attrs.commit? then @formattedCommit(@attrs.commit) else ""
-  formattedCommit: (commit) ->
-    s = "#{commit.author}: #{commit.msg}"
-    if s.length <= @MAX_MSG then s else s[0..@MAX_MSG - 1] + '...'
+  owner: -> if @attrs.cur_user?.length > 0 then @attrs.cur_user else null
 
   deployed: (attrs) -> @update attrs
 
@@ -32,20 +34,16 @@ class @DeployTarget extends MongoModel
 
   queuePos: (user) -> @userQueue().indexOf(user) + 1
 
+  linkToCommit: ->
+    repoLink   = (App.findOne name: @attrs.app)?.repoLink()
+    commitLink = @sha() or @ref()
+    if repoLink? and commitLink? then "#{repoLink}/#{commitLink}" else null
+  ref: -> if @attrs.ref?.length > 0 then @attrs.ref else null
+  sha: -> if @attrs.commit?.sha?.length > 0 then @attrs.commit.sha else null
   repoLink: -> (App.findOne name: @attrs.app)?.repoLink()
 
   userQueue: -> @attrs.user_queue || []
 
-  attrsForDisplay: [
-    {displayName: 'Release',   dbName: 'ref'                              },
-    {displayName: 'Commit',    display: @.prototype.commitMsg, fixed: true},
-    {displayName: 'In use by', dbName: 'cur_user',             fixed: true}
-  ]
-
-  @attrsForConfig: [
-    {displayName: 'Polling server', dbName: 'polling_server' },
-    {displayName: 'Release path',   dbName: 'release_path'   }
-  ]
 
   @allEnvs: ->
     envs = []
@@ -70,7 +68,7 @@ if Meteor.isServer
       #TODO some form of security
       dt   = DeployTarget.findOne(_id: attrs.id)
       user = attrs.user
-      dt.update cur_user: user
+      dt.claim user
       Campfire.speak "#{dt.name()} claimed by #{user}"
 
     unclaimDeployTarget: (id) ->

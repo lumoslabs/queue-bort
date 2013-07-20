@@ -9,21 +9,19 @@ _.extend Template.deployTargetGroup,
   deployTargets: -> DeployTarget.collection.find {env: @toString()}, {sort: ['server']}
 
 Template.deployTargetGroup.events
-  'click .newDeployTarget': (e) ->
-    DeployTarget.create env: @toString()
+  'click .newDeployTarget': (e) -> DeployTarget.create env: @toString()
 
+
+DT = (attrs) -> DeployTarget.findOne(_id: attrs._id)
+MAX_COMMIT_MSG = 70
 
 _.extend Template.deployTarget,
-  attrs: ->
-    _.map DeployTarget.findOne(_id: @_id).displayedAttrs(), (a) => _.extend a, dtid: @_id
-
   claimClass: ->
-    dt      = DeployTarget.findOne(_id: @_id)
-    dtOwner = dt.attrs.cur_user
+    dt      = DT(@)
     curUser = Meteor.user()?.profile?.name
-    if curUser?.length > 0 and dtOwner == curUser
+    if curUser?.length > 0 and dt.owner() == curUser
       "unclaim"
-    else if dtOwner?.length > 0
+    else if dt.owner()
       if curUser in dt.userQueue()
         "dequeue"
       else
@@ -34,9 +32,31 @@ _.extend Template.deployTarget,
     texts =
       claim:   "CLAIM ME"
       unclaim: "UNCLAIM"
-      dequeue: "Dequeue (##{DeployTarget.findOne(_id: @_id).queuePos(Meteor.user().profile.name)} in line)"
+      dequeue: "Dequeue (##{DT(@).queuePos(Meteor.user().profile.name)} in line)"
       queueUp: "Get in line"
     texts[Template.deployTarget.claimClass.apply(@)]
+
+  commitMsg: ->
+    commit = DT(@).attrs.commit
+    return '' unless commit?
+    msg = "#{commit.author}: #{commit.msg}"
+    if msg.length <= MAX_COMMIT_MSG then msg else msg[0..MAX_COMMIT_MSG - 1] + '...'
+
+  currentUser: -> Meteor.user()
+
+  ownerInfo: ->
+    dt = DT(@)
+    if (owner = dt.owner())?
+      "#{owner} (c. #{dt.attrs.hoursRemaining} hours remaining)"
+    else
+      ''
+
+  queueUsers:     -> DT(@).userQueue()
+  queueExists:    -> DT(@).userQueue().length > 0
+
+  releaseLink:    -> DT(@).linkToCommit()
+  releaseDisplay: -> DT(@).ref() or DT(@).sha()
+
   userClaimClass: ->
     classes =
       claim:   'free'
@@ -44,10 +64,6 @@ _.extend Template.deployTarget,
       dequeue: 'owned-by-other'
       queueUp: 'owned-by-other'
     classes[Template.deployTarget.claimClass.apply(@)]
-
-  currentUser:    -> Meteor.user()
-  queueUsers:     -> DeployTarget.findOne(_id: @_id).userQueue()
-  queueExists:    -> DeployTarget.findOne(_id: @_id).userQueue().length > 0
 
 Template.deployTarget.events
   'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
@@ -58,36 +74,3 @@ Template.deployTarget.events
   'click .delete': ->
     deployTarget = DeployTarget.findOne(_id: @_id)
     deployTarget.destroy() if confirm "Delete #{deployTarget.name()}?"
-
-
-_.extend Template.deployTargetAttr,
-  attrName: -> @name
-
-  clickVarsForAttr: -> _.extend @,
-    sessionSuffix: 'DeployTargetAttr'
-    varName:       'val'
-    editable:   -> !@fixed
-    sessionVal: -> "#{@dtid}_#{@name}"
-    link: ->
-      dt  = DeployTarget.findOne(_id: @dtid)
-      val = @[@varName]
-      if @dbName is 'ref'
-        val = dt.attrs.sha if dt.attrs.sha?.length > 0
-      repoLink = dt.repoLink()
-      if val?.length > 0 and @dbName is 'ref' and repoLink?
-        "#{repoLink}/#{val}"
-      else
-        null
-    linkDisplayVal: ->
-      val = @[@varName]
-      if @dbName is 'ref'
-        dt = DeployTarget.findOne(_id: @dtid)
-        val = DeployTarget.findOne(_id: @dtid).attrs.sha unless val?.length > 0
-      val
-    update: (val) ->
-      updateVals = {}
-      updateVals[@dbName] = val
-      DeployTarget.findOne(_id: @dtid).update(updateVals)
-
-Template.deployTargetAttr.events
-  'dblclick': (e, tmpl) -> Template.clickableInput.activateInput(e, tmpl)
