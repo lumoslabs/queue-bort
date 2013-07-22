@@ -5,9 +5,9 @@ class @MongoModel
 
   @create: (attrs) -> @collection.insert attrs
 
-  @each: (func) -> _.each @find({}), func
+  @each: (func) -> func(dt) for dt in @find({})
 
-  @find: (attrs) -> _.map @collection.find(attrs).fetch(), (q) -> new @(q)
+  @find: (attrs) -> new @(q) for q in @collection.find(attrs).fetch()
 
   @findOne: (attrs) ->
     record = @collection.findOne attrs
