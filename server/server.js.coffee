@@ -17,4 +17,4 @@ Meteor.startup ->
         msg = "#{dt.name()} reservation time ran out. Ousted #{oustedOwner}; now #{newOwnerText}"
         Campfire.speak msg
   @checkTimeout()
-  Meteor.setInterval @checkTimeout, 1000 * 60 * 30 # 30 minutes
+  Meteor.setInterval @checkTimeout, 1000 * 60 * QBConfig.reservationTime.minutesBetweenChecks

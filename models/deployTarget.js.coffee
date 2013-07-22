@@ -6,7 +6,7 @@ class @DeployTarget extends MongoModel
 
   HOUR: 1000 * 60 * 60
   DAY:  @HOUR * 24
-  allowedHours: -> 24
+  allowedHours: -> @attrs.allowedHours or QBConfig.reservationTime.defaultHours
   allowedTime:  -> @allowedHours() * @HOUR
 
   claimedTime:    -> @attrs.claimedAt.getTime()

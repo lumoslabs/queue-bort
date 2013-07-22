@@ -6,3 +6,7 @@
     domain:  'campfire domain'
     token:   'campfire auth token'
     emoji:   ':fast_forward:'
+
+  reservationTime:
+    defaultHours:         24, # default hours a deploy target can be reserved for
+    minutesBetweenChecks: 30  # time between checks for auto-releasing deploy targets
