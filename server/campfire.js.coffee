@@ -14,8 +14,10 @@
 
   speak: (msg) ->
     fullMsg = "#{@config.emoji} #{msg} [#{Meteor.absoluteUrl()}]"
-    if @http('post', '/speak', message: body: fullMsg)
-      console.log "Campfire (#{new Date}): #{msg}"
+    logMsg = "Campfire #{if @config.enabled then '' else '[disabled] '}"
+    logMsg += "(#{new Date}): #{msg}"
+    console.log logMsg
+    @http('post', '/speak', message: body: fullMsg)
 
   updateTopic: (topic) ->
     @http 'put', '', room: topic: topic
