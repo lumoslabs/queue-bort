@@ -47,7 +47,14 @@ _.extend Template.deployTarget,
   ownerInfo: ->
     dt = DT(@)
     if (owner = dt.owner())?
-      "#{owner} (c. #{dt.attrs.hoursRemaining} hours remaining)"
+      ownerStr = "#{owner}"
+      if tr = dt.timeRemaining()
+        hours = dt.hoursRemaining()
+        ownerStr += if tr < dt.HOUR
+          " (< 1 hour remaining!!1)"
+        else
+          " (c. #{hours} hours remaining)"
+      ownerStr
     else
       ''
 

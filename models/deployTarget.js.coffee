@@ -7,18 +7,39 @@ class @DeployTarget extends MongoModel
   HOUR: 1000 * 60 * 60
   DAY:  @HOUR * 24
   allowedHours: -> 24
+  allowedTime:  -> @allowedHours() * @HOUR
 
-  claim: (user) ->
-    @update cur_user: user, claimedAt: new Date, hoursRemaining: @allowedHours()
+  claimedTime:    -> @attrs.claimedAt.getTime()
+  hoursRemaining: -> Math.round(@timeRemaining() / @HOUR)
+  timeRemaining:  -> @attrs.timeRemaining
+  updateTimeRemaining: ->
+    tr = if @attrs.claimedAt? then @claimedTime() + @allowedTime() - (new Date) else null
+    @update timeRemaining: tr
+    tr
+  checkTimeout: ->
+    return false unless @owner()? and @attrs.claimedAt?
+    if @updateTimeRemaining() <= 0
+      oustedOwner = @owner()
+      @unclaim()
+      oustedOwner
+    else
+      false
+
+  claim: (user) -> @updateUser user
   unclaim: ->
     currentQueue = @userQueue()
     newOwner = currentQueue.shift()
     if newOwner?
-      @update cur_user: newOwner, user_queue: currentQueue, claimedAt: new Date, hoursRemaining: @allowedHours()
+      @updateUser newOwner, user_queue: currentQueue
       newOwner
     else
-      @update cur_user: '', claimedAt: null, hoursRemaining: null
+      @updateUser '', claimedAt: null, hoursRemaining: null
       null
+  updateUser: (user, options = {}) ->
+    allAttrs = _.extend {cur_user: user, claimedAt: new Date, hoursRemaining: @allowedHours()}, options
+    @update allAttrs
+    @updateTimeRemaining()
+
   owner: -> if @attrs.cur_user?.length > 0 then @attrs.cur_user else null
 
   deployed: (attrs) -> @update attrs
