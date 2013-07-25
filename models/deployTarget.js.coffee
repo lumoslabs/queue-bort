@@ -93,7 +93,8 @@ if Meteor.isServer
 
     unclaimDeployTarget: (id) ->
       dt   = DeployTarget.findOne(_id: id)
-      user = dt.attrs.cur_user
+      user = dt.owner()
+      return unless user? and user is Meteor.user()?.profile.name
       newOwner = dt.unclaim()
       newOwnerText = if newOwner? then "reserved for #{newOwner}" else "free"
       Campfire.speak "#{dt.name()} released by #{user}; now #{newOwnerText}"
