@@ -2,6 +2,7 @@
   <link rel="icon"          href="favicon.ico" type="image/x-icon"/>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
   <title>queue-bort</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 </head>
 
 <body>
@@ -31,7 +32,7 @@
 </template>
 
 <template name="deployTarget">
-  <div class="deployTarget {{userClaimClass}}">
+  <div class="deployTarget {{userClaimClass}}" id="{{divID}}">
 
     <div class="server">
       <span>{{app}} / {{server}}</span>

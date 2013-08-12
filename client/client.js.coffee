@@ -44,6 +44,8 @@ _.extend Template.deployTarget,
 
   currentUser: -> Meteor.user()
 
+  divID: -> DTHelpers.DIV_ID @_id
+
   ownerInfo: ->
     dt = DT(@)
     if (owner = dt.owner())?
