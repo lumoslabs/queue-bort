@@ -3,6 +3,8 @@ Meteor.startup ->
     changed: (id, fields) -> Meteor.defer -> animateChange(id)
 
 animateChange = (dtID) ->
+  return unless jQuery.ui?
+
   Deps.flush()
   $dt = $("##{DTHelpers.DIV_ID dtID}")
 
