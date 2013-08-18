@@ -11,14 +11,15 @@ class @DeployTarget extends MongoModel
   timeRemaining:  -> @attrs.timeRemaining
   updateTimeRemaining: ->
     tr = if @attrs.claimedAt? then @claimedTime() + @allowedTime() - (new Date) else null
+    tr = null if @attrs.currentHourAllotment? and @attrs.currentHourAllotment < 0
     @update timeRemaining: tr
     tr
   checkTimeout: ->
-    return false unless @owner()? and @attrs.claimedAt?
-    if @updateTimeRemaining() <= 0
-      oustedOwner = @owner()
-      @unclaim()
-      oustedOwner
+    return false unless (ownerToOust = @owner())?
+    tr = @updateTimeRemaining()
+    if tr? and tr <= 0
+      @removeFromQueue(ownerToOust)
+      ownerToOust
     else
       false
 
