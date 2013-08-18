@@ -3,8 +3,8 @@ class @DeployTarget extends MongoModel
 
   HOUR: 1000 * 60 * 60
   DAY:  @HOUR * 24
-  allowedHours: -> @attrs.allowedHours or QBConfig.reservationTime.defaultHours
-  allowedTime:  -> @allowedHours() * @HOUR
+  defaultAllowedHours: -> @attrs.defaultAllowedHours or QBConfig.reservationTime.defaultHours
+  allowedTime:         -> (@attrs.currentHourAllotment or @defaultAllowedHours()) * @HOUR
 
   claimedTime:    -> @attrs.claimedAt.getTime()
   hoursRemaining: -> Math.round(@timeRemaining() / @HOUR)
@@ -30,7 +30,7 @@ class @DeployTarget extends MongoModel
     @pull 'user_queue', user
     @updateTimeAttrs() unless oldOwner is @owner() # change of user?
   updateTimeAttrs: (options = {}) ->
-    @update _.extend({claimedAt: new Date, hoursRemaining: @allowedHours()}, options)
+    @update _.extend({claimedAt: new Date, currentHourAllotment: null}, options)
     @updateTimeRemaining()
 
   deployed: (attrs) -> @update attrs
