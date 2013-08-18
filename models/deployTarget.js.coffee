@@ -1,9 +1,6 @@
 class @DeployTarget extends MongoModel
   @collection: new Meteor.Collection "deploy_targets"
 
-  addToQueue:      (user) -> @push 'user_queue', user
-  removeFromQueue: (user) -> @pull 'user_queue', user
-
   HOUR: 1000 * 60 * 60
   DAY:  @HOUR * 24
   allowedHours: -> @attrs.allowedHours or QBConfig.reservationTime.defaultHours
@@ -25,35 +22,20 @@ class @DeployTarget extends MongoModel
     else
       false
 
-  claim: (user) -> @updateUser user
-  unclaim: ->
-    currentQueue = @userQueue()
-    newOwner = currentQueue.shift()
-    if newOwner?
-      @updateUser newOwner, user_queue: currentQueue
-      newOwner
-    else
-      @updateUser '', claimedAt: null, hoursRemaining: null
-      null
-  updateUser: (user, options = {}) ->
-    allAttrs = _.extend {cur_user: user, claimedAt: new Date, hoursRemaining: @allowedHours()}, options
-    @update allAttrs
+  addToQueue: (user) ->
+    @push 'user_queue', user
+    @updateTimeAttrs() if @isOwner(user)
+  removeFromQueue: (user) ->
+    oldOwner = @owner()
+    @pull 'user_queue', user
+    @updateTimeAttrs() unless oldOwner is @owner() # change of user?
+  updateTimeAttrs: (options = {}) ->
+    @update _.extend({claimedAt: new Date, hoursRemaining: @allowedHours()}, options)
     @updateTimeRemaining()
-
-  owner: -> if @attrs.cur_user?.length > 0 then @attrs.cur_user else null
 
   deployed: (attrs) -> @update attrs
 
-  displayedAttrs: ->
-    _.map @attrsForDisplay, (attr) =>
-      name:   attr.displayName
-      val:    if attr.display? then attr.display.apply(@) else @attrs[attr.dbName]
-      dbName: attr.dbName
-      fixed:  attr.fixed
-
-  name: -> "#{@attrs.app}/#{@attrs.server}"
-
-  queuePos: (user) -> @userQueue().indexOf(user) + 1
+  isOwner: (user) -> @queuePos(user) == 0
 
   linkToCommit: ->
     repoLink   = (App.findOne name: @attrs.app)?.repoLink()
@@ -62,7 +44,15 @@ class @DeployTarget extends MongoModel
   ref: -> if @attrs.ref?.length > 0 then @attrs.ref else null
   sha: -> if @attrs.commit?.sha?.length > 0 then @attrs.commit.sha else null
 
-  userQueue: -> @attrs.user_queue || []
+  name: -> "#{@attrs.app}/#{@attrs.server}"
+
+  owner: -> @_completeUserList()[0] or null
+
+  queuePos: (user) -> @_completeUserList().indexOf(user)
+
+  userQueue: -> @_completeUserList()[1..-1]
+
+  _completeUserList: -> @attrs.user_queue or []
 
 
   @allEnvs: ->
@@ -84,29 +74,23 @@ class @DeployTarget extends MongoModel
 
 if Meteor.isServer
   Meteor.methods
-    claimDeployTarget: (attrs) ->
-      #TODO some form of security
-      dt   = DeployTarget.findOne(_id: attrs.id)
-      user = attrs.user
-      dt.claim user
-      Campfire.speak "#{dt.name()} claimed by #{user}"
-
-    unclaimDeployTarget: (id) ->
-      dt   = DeployTarget.findOne(_id: id)
-      user = dt.owner()
-      return unless user? and user is Meteor.user()?.profile.name
-      newOwner = dt.unclaim()
-      newOwnerText = if newOwner? then "reserved for #{newOwner}" else "free"
-      Campfire.speak "#{dt.name()} released by #{user}; now #{newOwnerText}"
-
     queueUp: (attrs) ->
       dt   = DeployTarget.findOne(_id: attrs.id)
       user = attrs.user
       dt.addToQueue user
-      Campfire.speak "#{user} queued up for #{dt.name()}"
+      Campfire.speak if dt.isOwner(user)
+        "#{dt.name()} claimed by #{user}"
+      else
+        "#{user} queued up for #{dt.name()}"
 
     dequeue: (attrs) ->
       dt   = DeployTarget.findOne(_id: attrs.id)
       user = attrs.user
+      wasOwner = dt.isOwner(user)
       dt.removeFromQueue user
-      Campfire.speak "#{user} left queue for #{dt.name()}"
+      Campfire.speak if wasOwner
+        newOwner = dt.owner()
+        newOwnerText = if newOwner? then "reserved for #{newOwner}" else "free"
+        "#{dt.name()} released by #{user}; now #{newOwnerText}"
+      else
+        "#{user} left queue for #{dt.name()}"

@@ -19,7 +19,7 @@ _.extend Template.deployTarget,
   claimClass: ->
     dt      = DT(@)
     curUser = Meteor.user()?.profile?.name
-    if curUser?.length > 0 and dt.owner() == curUser
+    if dt.isOwner(curUser)
       "unclaim"
     else if dt.owner()
       if curUser in dt.userQueue()
@@ -75,8 +75,8 @@ _.extend Template.deployTarget,
     classes[Template.deployTarget.claimClass.apply(@)]
 
 Template.deployTarget.events
-  'click .claim':   -> Meteor.call 'claimDeployTarget',   id: @_id, user: Meteor.user().profile.name
-  'click .unclaim': -> Meteor.call 'unclaimDeployTarget', @_id
+  'click .claim':   -> Meteor.call 'queueUp', id: @_id, user: Meteor.user().profile.name
+  'click .unclaim': -> Meteor.call 'dequeue', id: @_id, user: Meteor.user().profile.name
   'click .queueUp': -> Meteor.call 'queueUp', id: @_id, user: Meteor.user().profile.name
   'click .dequeue': -> Meteor.call 'dequeue', id: @_id, user: Meteor.user().profile.name
 
