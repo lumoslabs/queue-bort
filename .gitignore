@@ -1,3 +1,4 @@
 .dbshell
 server/config.js.coffee
+server/seeds.js.coffee
 qb

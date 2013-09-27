@@ -1,0 +1,14 @@
+Meteor.startup ->
+  appName        = 'my_app'
+  githubUsername = 'username'
+
+  if DeployTarget.all().count() == 0
+    console.log "No servers found, generating from seed data"
+    DeployTarget.create app: appName, env: 'production', server: 'production'
+    DeployTarget.create app: appName, env: 'staging',    server: 'staging'
+    for i in [1..8]
+      DeployTarget.create app: appName, env: 'staging', server: "staging-#{i}"
+
+  if App.all().count() == 0
+    console.log "No apps registered, generating from seed data"
+    App.create name: appName, repo_link: "https://github.com/#{githubUsername}/#{appName}"

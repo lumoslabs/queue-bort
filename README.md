@@ -9,6 +9,8 @@ Install and run:
 - clone queue-bort repo
 - `cp server/config.js.coffee.example server/config.js.coffee`
 - fill in values in `server/config.js.coffee`
+- `cp server/seeds.js.coffee.example server/seeds.js.coffee`
+- fill in appName and other seed data in `server/seeds.js.coffee`
 - `cp qb.example qb`
 - fill in ROOT_URL and PORT in `qb`
 - `chmod +x qb`
